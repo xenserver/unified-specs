@@ -63,8 +63,5 @@
   },
   "SPECS/xenops-cli.spec": {
     "0": "/repos/xenops-cli#HEAD"
-  },
-  "SPECS/xenvm.spec": {
-    "0": "/repos/xenvm#HEAD"
   }
 }

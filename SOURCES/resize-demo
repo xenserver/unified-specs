@@ -1,3 +1,0 @@
-#!/bin/bash
-logger -t resize-demo ${1} ${2}
-xenvm lvextend ${1} ${2} --live
