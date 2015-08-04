@@ -41,6 +41,7 @@ start() {
 	umask 077
 
         echo -n $"Starting xapi-storage-script: "
+	mkdir -p /var/run/nonpersistent/xapi-storage-script
         export OCAMLRUNPARAM=b
         start_daemon -p "$PIDFILE" $exec --pidfile "$PIDFILE" --daemon true $XAPI_STORAGE_SCRIPT_OPTIONS
         RETVAL=$?
