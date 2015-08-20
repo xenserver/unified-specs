@@ -1,3 +1,3 @@
 <collect>
-<directory pattern="*">/etc/xenvm.d</directory>
+<directory pattern=".*">/etc/xenvm.d</directory>
 </collect>
