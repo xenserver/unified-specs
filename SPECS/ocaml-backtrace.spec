@@ -6,6 +6,8 @@ License:        LGPL2.1 + OCaml linking exception
 URL:            https://github.com/xapi-project/backtrace
 Source0:        https://github.com/xapi-project/backtrace/archive/v%{version}/%{name}-%{version}.tar.gz
 BuildRequires:  ocaml
+BuildRequires:  ocaml-ocamldoc
+BuildRequires:  ocaml-rpc-devel
 BuildRequires:  ocaml-sexplib-devel
 BuildRequires:  ocaml-findlib
 
