@@ -1,5 +1,5 @@
 Name:           ocaml-backtrace
-Version:        0.1
+Version:        0.3
 Release:        1%{?dist}
 Summary:        Library for processing backtraces across hosts/processes/languages
 License:        LGPL2.1 + OCaml linking exception
@@ -54,5 +54,8 @@ ocaml setup.ml -install
 
 
 %changelog
+* Fri Aug 21 2015 David Scott <dave.scott@citrix.com> - 0.3-1
+- Update to 0.3
+
 * Sun Nov 2 2014 David Scott <dave.scott@citrix.com> - 0.1-1
 - Initial package
