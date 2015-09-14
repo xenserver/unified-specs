@@ -75,6 +75,7 @@ cp storage/api/__init__.py storage/api/datapath.py storage/api/volume.py storage
 %{python_sitelib}/xapi/storage/__init__.py*
 %{python_sitelib}/xapi/storage/common.py*
 %{python_sitelib}/xapi/storage/log.py*
+%{python_sitelib}/xapi/storage/api/__init__.py*
 %{python_sitelib}/xapi/storage/api/datapath.py*
 %{python_sitelib}/xapi/storage/api/volume.py*
 %{python_sitelib}/xapi/storage/api/plugin.py*
