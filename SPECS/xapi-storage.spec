@@ -60,8 +60,10 @@ export OCAMLFIND_DESTDIR=$RPM_BUILD_ROOT%{_libdir}/ocaml
 mkdir -p $OCAMLFIND_DESTDIR
 ocaml setup.ml -install
 cd ../python/xapi
-mkdir -p %{buildroot}%{python_sitelib}/xapi
-cp __init__.py datapath.py volume.py plugin.py %{buildroot}%{python_sitelib}/xapi
+mkdir -p %{buildroot}%{python_sitelib}/xapi/storage/api
+cp __init__.py %{buildroot}%{python_sitelib}/xapi
+cp storage/__init__.py storage/common.py storage/log.py %{buildroot}%{python_sitelib}/xapi/storage
+cp storage/api/__init__.py storage/api/datapath.py storage/api/volume.py storage/api/plugin.py %{buildroot}%{python_sitelib}/xapi/storage/api
 
 %files
 %defattr(-,root,root,-)
@@ -69,10 +71,13 @@ cp __init__.py datapath.py volume.py plugin.py %{buildroot}%{python_sitelib}/xap
 %exclude %{_libdir}/ocaml/xapi-storage/*.a
 %exclude %{_libdir}/ocaml/xapi-storage/*.cmxa
 %exclude %{_libdir}/ocaml/xapi-storage/*.ml
-%{python_sitelib}/xapi/datapath.py*
-%{python_sitelib}/xapi/volume.py*
-%{python_sitelib}/xapi/plugin.py*
 %{python_sitelib}/xapi/__init__.py*
+%{python_sitelib}/xapi/storage/__init__.py*
+%{python_sitelib}/xapi/storage/common.py*
+%{python_sitelib}/xapi/storage/log.py*
+%{python_sitelib}/xapi/storage/api/datapath.py*
+%{python_sitelib}/xapi/storage/api/volume.py*
+%{python_sitelib}/xapi/storage/api/plugin.py*
 
 %files devel
 %defattr(-,root,root,-)
@@ -81,7 +86,7 @@ cp __init__.py datapath.py volume.py plugin.py %{buildroot}%{python_sitelib}/xap
 %{_libdir}/ocaml/xapi-storage/*.ml
 
 %changelog
-* Tue Aug  5 2015 David Scott <dave.scott@citrix.com> - 0.6-1
+* Wed Aug  5 2015 David Scott <dave.scott@citrix.com> - 0.6-1
 - Update to 0.6
 
 * Wed Jul 15 2015 David Scott <dave.scott@citrix.com> - 0.5-1
