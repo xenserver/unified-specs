@@ -1,7 +1,7 @@
 Summary:       Xapi storage interface
 Name:          xapi-storage
-Version:       0.8
-Release:       3%{?dist}
+Version:       0.8.1
+Release:       1%{?dist}
 URL:           https://github.com/xapi-project/xapi-storage
 Source0:       https://github.com/xapi-project/xapi-storage/archive/v%{version}/%{name}-%{version}.tar.gz
 Patch0:        xapi-storage.patch
@@ -89,6 +89,9 @@ cp storage/api/__init__.py storage/api/datapath.py storage/api/volume.py storage
 %{_libdir}/ocaml/xapi-storage/*.ml
 
 %changelog
+* Tue Sep 29 2015 Robert Breker <robert.breker@citrix.com> - 0.8.1-1
+- Update to 0.8.1
+
 * Fri Sep 11 2015 David Scott <dave.scott@citrix.com> - 0.8-3
 - Update to 0.8
 
