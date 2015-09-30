@@ -1,6 +1,6 @@
 Name:           xapi-storage-datapath-plugins
 Version:        0.2.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Storage datapath plugins for the xapi toolstack
 License:        LGPL
 URL:            https://github.com/xapi-project/xapi-storage-datapath-plugins
@@ -17,7 +17,6 @@ Storage datapath plugins for the xapi toolstack.
 
 %install
 DESTDIR=%{buildroot} SCRIPTDIR=%{_libexecdir}/xapi-storage-script/ PYTHONDIR=/usr/lib/python2.7/site-packages/xapi/storage/datapath make install
-(cd %{buildroot}/%{_libexecdir}/xapi-storage-script/datapath; rm -f raw+file; ln -s loop+blkback raw+file)
 
 %files
 %doc README.md LICENSE
@@ -29,6 +28,9 @@ DESTDIR=%{buildroot} SCRIPTDIR=%{_libexecdir}/xapi-storage-script/ PYTHONDIR=/us
 /usr/lib/python2.7/site-packages/xapi/storage/datapath/*.py*
 
 %changelog
+* Wed Sep 30 2015 Robert Breker <robert.breker@citrix.com> - 0.2.1-2
+- Don't overwrite the upstream default datapath plugin for raw+file
+
 * Tue Sep 15 2015 David Scott <dave.scott@citrix.com> - 0.2.1-1
 - Update to 0.2.1
 
