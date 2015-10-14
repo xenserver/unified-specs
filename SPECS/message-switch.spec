@@ -20,6 +20,7 @@ BuildRequires: ocaml-rpc-devel
 BuildRequires: ocaml-async-devel
 BuildRequires: ocaml-shared-block-ring-devel
 BuildRequires: ocaml-mtime-devel
+BuildRequires: oasis
 # Not available in the build chroot
 #Requires:      redhat-lsb-core
 Requires(post): chkconfig
@@ -37,6 +38,8 @@ cp %{SOURCE3} message-switch.xml
 cp %{SOURCE4} stuff.xml
 
 %build
+sed -i s/,\ bisect// _oasis
+oasis setup
 ocaml setup.ml -configure
 ocaml setup.ml -build
 

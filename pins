@@ -4,6 +4,9 @@
   "SPECS/forkexecd.spec": {
     "0": "/repos/forkexecd#HEAD"
   },
+  "SPECS/message-switch.spec": {
+    "0": "/repos/message-switch#HEAD"
+  },
   "SPECS/ocaml-cdrom.spec": {
     "0": "/repos/cdrom#HEAD"
   },
