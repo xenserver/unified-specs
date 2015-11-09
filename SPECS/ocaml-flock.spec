@@ -10,6 +10,7 @@ BuildRequires:  ocaml
 BuildRequires:  ocaml-ctypes-devel
 BuildRequires:  ocaml-findlib-devel
 BuildRequires:  ocaml-ounit-devel
+BuildRequires:  ocaml-ocamldoc
 BuildRequires:  oasis
 
 %description
