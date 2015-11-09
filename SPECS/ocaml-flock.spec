@@ -10,6 +10,7 @@ BuildRequires:  ocaml
 BuildRequires:  ocaml-ctypes-devel
 BuildRequires:  ocaml-findlib-devel
 BuildRequires:  ocaml-ounit-devel
+BuildRequires:  oasis
 
 %description
 OCaml bindings to flock(2).
