@@ -15,6 +15,7 @@ BuildRequires:  ocaml-rpc-devel
 BuildRequires:  ocaml-stdext-devel
 BuildRequires:  ocaml-uuidm-devel
 BuildRequires:  ocaml-xcp-idl-devel
+BuildRequires:  ocaml-oclock-devel
 #Requires:  redhat-lsb-core
 Requires(post): chkconfig
 Requires(preun): chkconfig
