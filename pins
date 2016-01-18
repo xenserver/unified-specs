@@ -73,4 +73,10 @@
   "SPECS/xenops-cli.spec": {
     "0": "/repos/xenops-cli#HEAD"
   }
+
+  "SPECS/xen.spec": {
+    "0": "/repos/xen-4.6#HEAD"
+  }
+
 }
+
