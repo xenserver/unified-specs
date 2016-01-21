@@ -15,9 +15,9 @@ BuildRequires:  ocaml >= 3.10.0
 BuildRequires:  ocaml-findlib
 BuildRequires:  ocaml-camlp4
 BuildRequires:  ocaml-ocamldoc
-BuildRequires:  libiconv-devel
 
-Requires: libiconv
+# For iconv.h and libiconv
+BuildRequires:  glibc-devel
 
 %description
 OCaml-Text is a library for dealing with ``text'', i.e. sequence of
