@@ -44,6 +44,8 @@ BuildRequires:  perl
 BuildRequires:  util-linux
 
 Requires:       gcc
+Requires:       ncurses-devel
+Requires:       gdbm-devel
 Requires:       rpm-build
 
 Provides:       ocaml(compiler) = %{version}

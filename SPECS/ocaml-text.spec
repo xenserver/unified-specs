@@ -16,9 +16,6 @@ BuildRequires:  ocaml-findlib
 BuildRequires:  ocaml-camlp4
 BuildRequires:  ocaml-ocamldoc
 
-# For iconv.h and libiconv
-BuildRequires:  glibc-devel
-
 %description
 OCaml-Text is a library for dealing with ``text'', i.e. sequence of
 unicode characters, in a convenient way.
