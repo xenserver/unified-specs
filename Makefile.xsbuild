@@ -1,12 +1,19 @@
 # mock is in both /usr/sbin and /usr/bin, but it is the version in /usr/bin that should 
 # executed. The build system has /usr/sbin first in the path which leads to permission
 # problems.
+
+USE_BRANDING := yes
+IMPORT_BRANDING := yes
+# makefile for xen component in build system
+include $(B_BASE)/common.mk
+include $(B_BASE)/rpmbuild.mk
+
 PATH:=/usr/bin:$(PATH)
 FETCH_EXTRA_FLAGS=--mirror file:///distfiles/ocaml2
 
-.PHONY: buildrpms unified $(MY_OUTPUT_DIR)/xen.inc
+.PHONY: buildrpms build $(MY_OUTPUT_DIR)/xen.inc
 
-unified: buildrpms /output/unified/SOURCES/MANIFEST 
+build: buildrpms /output/unified/SOURCES/MANIFEST $(MY_OUTPUT_DIR)/xen.inc
 
 /output/unified/SOURCES/MANIFEST: buildrpms
 	mkdir /output/unified/SOURCES
@@ -28,8 +35,8 @@ buildrpms:
 XEN_REPO_NAME := xen-4.6
 IPXE_REPO_NAME := ipxe
 
-$(eval $(shell $(call git_cset_number,$(REPO_NAME)))) # Defines CSET_NUMBER for us
-XEN_VERSION := $(shell $(MAKE) -C $(call git_loc,$(REPO_NAME)) --no-print-directory xenversion)
+$(eval $(shell $(call git_cset_number,$(XEN_REPO_NAME)))) # Defines CSET_NUMBER for us
+XEN_VERSION := $(shell $(MAKE) -C $(call git_loc,$(XEN_REPO_NAME)) --no-print-directory xenversion)
 XEN_RELEASE := $(PLATFORM_VERSION).$(CSET_NUMBER)
 
 ifeq ($(BUILD_NUMBER),0x)
@@ -38,9 +45,9 @@ else
 XEN_VENDORVERSION := -xs$(shell echo $(BUILD_NUMBER) | tr -dc [:digit:])
 endif
 
-REPO_LOC := $(call git_loc,$(REPO_NAME))
-BASE_CSET_STR := $(shell { git rev-parse --verify --short=12 qparent --git-dir=$(REPO_LOC)/.git; } )
-PQ_CSET_STR   := $(shell { git rev-parse --verify --short=12 HEAD    --git-dir=$(REPO_LOC)/.git/patches/.git; } )
+XEN_REPO_LOC := $(call git_loc,$(XEN_REPO_NAME))
+BASE_CSET_STR := $(shell { git rev-parse --verify --short=12 qparent --git-dir=$(XEN_REPO_LOC)/.git; } )
+PQ_CSET_STR   := $(shell { git rev-parse --verify --short=12 HEAD    --git-dir=$(XEN_REPO_LOC)/.git/patches/.git; } )
 
 XEN_CHANGESET := "$(BASE_CSET_STR), pq $(PQ_CSET_STR)"
 
