@@ -13,7 +13,7 @@ FETCH_EXTRA_FLAGS=--mirror file:///distfiles/ocaml2
 
 .PHONY: buildrpms build $(MY_OUTPUT_DIR)/xen.inc
 
-build: buildrpms /output/unified/SOURCES/MANIFEST $(MY_OUTPUT_DIR)/xen.inc
+build: buildrpms /output/unified/SOURCES/MANIFEST $(BRANDING) $(MY_OUTPUT_DIR)/xen.inc
 
 /output/unified/SOURCES/MANIFEST: buildrpms
 	mkdir /output/unified/SOURCES
@@ -62,4 +62,11 @@ $(MY_OUTPUT_DIR)/xen.inc: $(MY_OUTPUT_DIRSTAMP)
        	} > $@.tmp; \
        	mv -f $@.tmp $@; \
        	}
+
+.PHONY: $(BRANDING)
+$(BRANDING): $(MY_OUTPUT_DIR)/.dirstamp
+	{ set -e; set -o pipefail; \
+	$(Q)echo "XEN_VERSION := $(XEN_VERSION)" > $@.tmp; \
+	mv -f $@.tmp $@; \
+	}
 
