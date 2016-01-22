@@ -4,7 +4,7 @@
 PATH:=/usr/bin:$(PATH)
 FETCH_EXTRA_FLAGS=--mirror file:///distfiles/ocaml2
 
-.PHONY: buildrpms unified
+.PHONY: buildrpms unified $(MY_OUTPUT_DIR)/xen.inc
 
 unified: buildrpms /output/unified/SOURCES/MANIFEST 
 
@@ -24,4 +24,35 @@ buildrpms:
 	rm -rf /output/unified/RPMS/x86_64/*.src.rpm
 	rm -rf /output/unified/RPMS/repodata
 	cp -r _build/SRPMS /output/unified/
+
+XEN_REPO_NAME := xen-4.6
+IPXE_REPO_NAME := ipxe
+
+$(eval $(shell $(call git_cset_number,$(REPO_NAME)))) # Defines CSET_NUMBER for us
+XEN_VERSION := $(shell $(MAKE) -C $(call git_loc,$(REPO_NAME)) --no-print-directory xenversion)
+XEN_RELEASE := $(PLATFORM_VERSION).$(CSET_NUMBER)
+
+ifeq ($(BUILD_NUMBER),0x)
+XEN_VENDORVERSION := -xs-local
+else
+XEN_VENDORVERSION := -xs$(shell echo $(BUILD_NUMBER) | tr -dc [:digit:])
+endif
+
+REPO_LOC := $(call git_loc,$(REPO_NAME))
+BASE_CSET_STR := $(shell { git rev-parse --verify --short=12 qparent --git-dir=$(REPO_LOC)/.git; } )
+PQ_CSET_STR   := $(shell { git rev-parse --verify --short=12 HEAD    --git-dir=$(REPO_LOC)/.git/patches/.git; } )
+
+XEN_CHANGESET := "$(BASE_CSET_STR), pq $(PQ_CSET_STR)"
+
+.PHONY: $(MY_OUTPUT_DIR)/xen.inc
+$(MY_OUTPUT_DIR)/xen.inc: $(MY_OUTPUT_DIRSTAMP)
+	{ set -e; set -o pipefail; \
+	$(Q){ echo XEN_PKG_NAME := xen; \
+	  echo XEN_PKG_VERSION := $(XEN_VERSION)-$(XEN_RELEASE); \
+       	  echo XEN_PKG_ARCH := $(DOMAIN0_ARCH_OPTIMIZED); \
+       	  echo XEN_PKG_FILE := RPMS/$(DOMAIN0_ARCH_OPTIMIZED)/$(OUTPUT_RPM); \
+       	  echo XEN_VERSION := \$$\(XEN_VERSION\); \
+       	} > $@.tmp; \
+       	mv -f $@.tmp $@; \
+       	}
 
