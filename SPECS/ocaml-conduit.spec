@@ -16,6 +16,7 @@ BuildRequires:  ocaml-stringext-devel
 BuildRequires:  ocaml-uri-devel
 BuildRequires:  ocaml-cstruct-devel
 BuildRequires:  ocaml-ipaddr-devel
+BuildRequires:  ocaml-pa-structural-sexp-devel
 
 %description
 The conduit library takes care of establishing and listening for TCP and SSL/TLS connections for the Lwt and Async libraries.

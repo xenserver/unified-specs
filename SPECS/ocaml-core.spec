@@ -2,7 +2,7 @@
 %define debug_package %{nil}
 
 Name:           ocaml-core
-Version:        111.28.00
+Version:        112.35.01
 Release:        1%{?dist}
 Summary:        System-independent part of Jane Street's Core.
 
@@ -31,6 +31,8 @@ BuildRequires:  ocaml-typerep-devel
 BuildRequires:  ocaml-variantslib-devel
 BuildRequires:  ocaml-compiler-libs
 BuildRequires:  ocaml-core-kernel-devel
+BuildRequires:  ocaml-custom-printf-devel
+BuildRequires:  ocaml-pa-structural-sexp-devel
 BuildRequires:  chrpath
 
 %define _use_internal_dependency_generator 0

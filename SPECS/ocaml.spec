@@ -1,21 +1,26 @@
+# OCaml has a bytecode backend that works on anything with a C
+# compiler, and a native code backend available on a subset of
+# architectures.  A further subset of architectures support native
+# dynamic linking.
+
+# jludlam: We are missing env vars from fedora's rpm library:
+%global native_compiler 1
+%global natdynlink 1
+
 Name:           ocaml
-Version:        4.01.0
-Release:        2%{?extrarelease}
+Version:        4.02.2
+Release:        5%{?dist}
 
 Summary:        OCaml compiler and programming environment
 
 License:        QPL and (LGPLv2+ with exceptions)
 
-Group:          Development/Languages
-
 URL:            http://www.ocaml.org
 
-Source0:        http://caml.inria.fr/pub/distrib/ocaml-4.01/ocaml-%{version}.tar.bz2
-Source1:        http://caml.inria.fr/pub/distrib/ocaml-4.01/ocaml-4.01-refman-html.tar.gz
-Source2:        http://caml.inria.fr/pub/distrib/ocaml-4.01/ocaml-4.01-refman.pdf
-Source3:        http://caml.inria.fr/pub/distrib/ocaml-4.01/ocaml-4.01-refman.info.tar.gz
-
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
+Source0:        http://caml.inria.fr/pub/distrib/ocaml-4.02/ocaml-%{version}.tar.gz
+Source1:        http://caml.inria.fr/pub/distrib/ocaml-4.02/ocaml-4.02-refman-html.tar.gz
+Source2:        http://caml.inria.fr/pub/distrib/ocaml-4.02/ocaml-4.02-refman.pdf
+Source3:        http://caml.inria.fr/pub/distrib/ocaml-4.02/ocaml-4.02-refman.info.tar.gz
 
 # IMPORTANT NOTE:
 #
@@ -24,57 +29,63 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 # will be OVERWRITTEN by the next update.  Instead, request commit
 # access to the fedorahosted project:
 #
-# http://git.fedorahosted.org/git/?p=fedora-ocaml.git
+# https://git.fedorahosted.org/cgit/fedora-ocaml.git/
+#
+# Current branch: fedora-23-4.02
 #
 # ALTERNATIVELY add a patch to the end of the list (leaving the
 # existing patches unchanged) adding a comment to note that it should
 # be incorporated into the git repo at a later time.
 #
-Patch0003:      0003-ocamlbyteinfo-ocamlplugininfo-Useful-utilities-from-.patch
-Patch0004:      0004-Don-t-add-rpaths-to-libraries.patch
+Patch0001:      0001-Don-t-ignore-.-configure-it-s-a-real-git-file.patch
+Patch0002:      0002-Ensure-empty-compilerlibs-directory-is-created-by-gi.patch
+Patch0003:      0003-Don-t-add-rpaths-to-libraries.patch
+Patch0004:      0004-ocamlbyteinfo-ocamlplugininfo-Useful-utilities-from-.patch
 Patch0005:      0005-configure-Allow-user-defined-C-compiler-flags.patch
-#Patch0006:      0006-Add-support-for-ppc64.patch
+Patch0006:      0006-Add-support-for-ppc64.patch
+Patch0007:      0007-ppc64-Update-for-OCaml-4.02.0.patch
+Patch0008:      0008-Add-support-for-ppc64le.patch
+Patch0009:      0009-ppc64le-Update-for-OCaml-4.02.0.patch
+Patch0010:      0010-arm-arm64-Mark-stack-as-non-executable.patch
+Patch0011:      0011-arg-Add-no_arg-and-get_arg-helper-functions.patch
+Patch0012:      0012-arg-Allow-flags-such-as-flag-arg-as-well-as-flag-arg.patch
+Patch0013:      0013-PR-6517-use-ISO-C99-types-u-int-32-64-_t-in-preferen.patch
+Patch0014:      0014-ppc-ppc64-ppc64le-Mark-stack-as-non-executable.patch
+Patch0015:      0015-ppc64-ppc64le-proc-Interim-definitions-for-op_is_pur.patch
+Patch0016:      0016-ppc64le-Fix-calling-convention-of-external-functions.patch
+Patch0017:      0017-ppc64-Fix-PIC-variant-of-asmrun.patch
+Patch0018:      0018-ppc64le-Fix-PIC-variant-of-asmrun.patch
+Patch0019:      0019-ppc64-ppc64le-Fix-behaviour-of-Int64.max_int-1-RHBZ-.patch
 
-Patch0007:      0007-Citrix-Debug-report-string-in-int-of-string-exception.patch
+# Add BFD support so that ocamlobjinfo supports *.cmxs format (RHBZ#1113735).
+BuildRequires:  binutils-devel
 
 BuildRequires:  ncurses-devel
 BuildRequires:  gdbm-devel
+# BuildRequires:  emacs
 BuildRequires:  gawk
 BuildRequires:  perl
 BuildRequires:  util-linux
+BuildRequires:  chrpath
+
+# git is required for patch management.
+BuildRequires:  git
 
 Requires:       gcc
-Requires:       ncurses-devel
-Requires:       gdbm-devel
-Requires:       rpm-build
+
+# Because we pass -c flag to ocaml-find-requires (to avoid circular
+# dependencies) we also have to explicitly depend on the right version
+# of ocaml-runtime.
+Requires:       ocaml-runtime = %{version}-%{release}
+
+# Bundles an MD5 implementation in byterun/md5.{c,h}
+Provides:       bundled(md5-plumb)
 
 Provides:       ocaml(compiler) = %{version}
 
-# We can compile OCaml on just about anything, but the native code
-# backend is only available on a subset of architectures.
-ExclusiveArch:  alpha %{arm} ia64 %{ix86} x86_64 ppc ppc64 sparc sparcv9
-
-%ifarch %{arm} %{ix86} ppc ppc64 sparc sparcv9 x86_64
-%global native_compiler 1
-%else
-%global native_compiler 0
-%endif
-
-%ifarch %{arm} %{ix86} ppc ppc64 sparc sparcv9 x86_64
-%global natdynlink 1
-%else
-%global natdynlink 0
-%endif
-
 %global __ocaml_requires_opts -c -f '%{buildroot}%{_bindir}/ocamlrun %{buildroot}%{_bindir}/ocamlobjinfo'
 %global __ocaml_provides_opts -f '%{buildroot}%{_bindir}/ocamlrun %{buildroot}%{_bindir}/ocamlobjinfo'
 
-
-Provides: ocaml(compiler) = %{major}.1
-Provides: ocaml(runtime) = %{major}.1
-
-%global __ocaml_requires_opts -c -f '%{buildroot}%{_bindir}/ocamlrun %{buildroot}%{_bindir}/ocamlobjinfo'
-%global __ocaml_provides_opts -f '%{buildroot}%{_bindir}/ocamlrun %{buildroot}%{_bindir}/ocamlobjinfo'
 
 %description
 OCaml is a high-level, strongly-typed, functional and object-oriented
@@ -82,13 +93,12 @@ programming language from the ML family of languages.
 
 This package comprises two batch compilers (a fast bytecode compiler
 and an optimizing native-code compiler), an interactive toplevel system,
-parsing tools (Lex,Yacc,Camlp4), a replay debugger, a documentation generator,
+parsing tools (Lex,Yacc), a replay debugger, a documentation generator,
 and a comprehensive library.
 
 
 %package runtime
 Summary:        OCaml runtime environment
-Group:          Development/Languages
 Requires:       util-linux
 Provides:       ocaml(runtime) = %{version}
 
@@ -102,41 +112,14 @@ bytecode.
 
 %package source
 Summary:        Source code for OCaml libraries
-Group:          Development/Languages
 Requires:       ocaml = %{version}-%{release}
 
 %description source
 Source code for OCaml libraries.
 
 
-%package camlp4
-Summary:        Pre-Processor-Pretty-Printer for OCaml
-Group:          Development/Libraries
-Requires:       ocaml-runtime = %{version}-%{release}
-
-%description camlp4
-Camlp4 is a Pre-Processor-Pretty-Printer for OCaml, parsing a source
-file and printing some result on standard output.
-
-This package contains the runtime files.
-
-
-%package camlp4-devel
-Summary:        Pre-Processor-Pretty-Printer for OCaml
-Group:          Development/Libraries
-Requires:       ocaml = %{version}-%{release}
-Requires:       %{name}-camlp4 = %{version}-%{release}
-
-%description camlp4-devel
-Camlp4 is a Pre-Processor-Pretty-Printer for OCaml, parsing a source
-file and printing some result on standard output.
-
-This package contains the development files.
-
-
 %package ocamldoc
-Summary:        Documentation generator for OCaml.
-Group:          Development/Libraries
+Summary:        Documentation generator for OCaml
 Requires:       ocaml = %{version}-%{release}
 Provides:	ocamldoc
 
@@ -144,9 +127,17 @@ Provides:	ocamldoc
 Documentation generator for OCaml.
 
 
+#%package emacs
+#Summary:        Emacs mode for OCaml
+#Requires:       ocaml = %{version}-%{release}
+#Requires:       emacs(bin)
+
+#%description emacs
+#Emacs mode for OCaml.
+
+
 %package docs
 Summary:        Documentation for OCaml
-Group:          Development/Libraries
 Requires:       ocaml = %{version}-%{release}
 Requires(post): /sbin/install-info
 Requires(preun): /sbin/install-info
@@ -162,7 +153,6 @@ man pages and info files.
 
 %package compiler-libs
 Summary:        Compiler libraries for OCaml
-Group:          Development/Libraries
 Requires:       ocaml = %{version}-%{release}
 
 
@@ -182,12 +172,14 @@ may not be portable between versions.
 %setup -q -T -D -a 3 -n %{name}-%{version}
 cp %{SOURCE2} refman.pdf
 
-%patch0003 -p1 -b ~0003-ocamlbyteinfo-ocamlplugininfo-Useful-utilities-from-.patch
-%patch0004 -p1 -b ~0004-Don-t-add-rpaths-to-libraries.patch
-%patch0005 -p1 -b ~0005-configure-Allow-user-defined-C-compiler-flags.patch
-#%patch0006 -p1 -b ~0006-Add-support-for-ppc64.patch
+git init
+git config user.email "noone@example.com"
+git config user.name "no one"
+git add .
+git add -f configure .depend ;# required because .gitignore lists these files
+git commit -a -q -m "%{version} baseline"
+git am %{patches} </dev/null
 
-%patch0007 -p1 -b ~0007-Citrix-Debug-report-string-in-int-of-string-exception.patch
 
 %build
 # make -jN (N > 1) breaks the build.  Therefore we cannot use
@@ -197,29 +189,49 @@ unset MAKEFLAGS
 # For ppc64 we need a larger stack than default to compile some files
 # because the stages in the OCaml compiler are not mutually tail
 # recursive.
-%ifarch ppc64
+%ifarch ppc64 ppc64le
 ulimit -a
 ulimit -Hs 65536
 ulimit -Ss 65536
 %endif
 
-CFLAGS="$RPM_OPT_FLAGS" \
+CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing" \
 ./configure \
     -bindir %{_bindir} \
     -libdir %{_libdir}/ocaml \
-    -mandir %{_mandir}/man1
+    -x11include %{_includedir} \
+    -x11include %{_includedir} \
+    -mandir %{_mandir}/man1 \
+    -no-curses
 make world
 %if %{native_compiler}
 make opt opt.opt
 %endif
-make -C emacs ocamltags
+#make -C emacs ocamltags
 
 # Currently these tools are supplied by Debian, but are expected
 # to go upstream at some point.
 includes="-nostdlib -I stdlib -I utils -I parsing -I typing -I bytecomp -I asmcomp -I driver -I otherlibs/unix -I otherlibs/str -I otherlibs/dynlink"
 boot/ocamlrun ./ocamlc $includes dynlinkaux.cmo ocamlbyteinfo.ml -o ocamlbyteinfo
+# ocamlplugininfo doesn't compile because it needs 'dynheader' (type
+# decl) and I have no idea where that comes from
 #cp otherlibs/dynlink/natdynlink.ml .
 #boot/ocamlrun ./ocamlopt $includes unix.cmxa str.cmxa natdynlink.ml ocamlplugininfo.ml -o ocamlplugininfo
+
+
+%check
+cd testsuite
+
+# See comments above.
+unset MAKEFLAGS
+
+%ifarch ppc64 ppc64le
+ulimit -a
+ulimit -Hs 65536
+ulimit -Ss 65536
+%endif
+
+make all ||:
 
 
 %install
@@ -229,6 +241,15 @@ make install \
      MANDIR=$RPM_BUILD_ROOT%{_mandir}
 perl -pi -e "s|^$RPM_BUILD_ROOT||" $RPM_BUILD_ROOT%{_libdir}/ocaml/ld.conf
 
+#(
+    # install emacs files
+#    cd emacs;
+#    make install \
+#         BINDIR=$RPM_BUILD_ROOT%{_bindir} \
+#         EMACSDIR=$RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp
+#    make install-ocamltags BINDIR=$RPM_BUILD_ROOT%{_bindir}
+#)
+
 (
     # install info files
     mkdir -p $RPM_BUILD_ROOT%{_infodir};
@@ -237,8 +258,13 @@ perl -pi -e "s|^$RPM_BUILD_ROOT||" $RPM_BUILD_ROOT%{_libdir}/ocaml/ld.conf
 
 echo %{version} > $RPM_BUILD_ROOT%{_libdir}/ocaml/fedora-ocaml-release
 
+# Remove rpaths from stublibs .so files.
+chrpath --delete $RPM_BUILD_ROOT%{_libdir}/ocaml/stublibs/*.so
+
 install -m 0755 ocamlbyteinfo $RPM_BUILD_ROOT%{_bindir}
 #install -m 0755 ocamlplugininfo $RPM_BUILD_ROOT%{_bindir}
+
+find $RPM_BUILD_ROOT -name .ignore -delete
 
 
 %post docs
@@ -256,6 +282,7 @@ fi
 
 
 %files
+%doc LICENSE
 %{_bindir}/ocaml
 %{_bindir}/ocamlbyteinfo
 %{_bindir}/ocamlbuild
@@ -283,8 +310,8 @@ fi
 %if %{native_compiler}
 %{_bindir}/ocamlopt
 %{_bindir}/ocamlopt.opt
-%{_bindir}/ocamloptp
 %endif
+%{_bindir}/ocamloptp
 #%{_bindir}/ocamlplugininfo
 %{_bindir}/ocamlprof
 %{_bindir}/ocamlyacc
@@ -304,6 +331,7 @@ fi
 %{_libdir}/ocaml/*.cmxa
 %{_libdir}/ocaml/*.cmx
 %{_libdir}/ocaml/*.o
+%{_libdir}/ocaml/libasmrun_shared.so
 %endif
 %{_libdir}/ocaml/*.mli
 %{_libdir}/ocaml/libcamlrun_shared.so
@@ -317,9 +345,11 @@ fi
 %endif
 %{_libdir}/ocaml/caml
 %{_libdir}/ocaml/ocamlbuild
+%exclude %{_libdir}/ocaml/graphicsX11.mli
 
 
 %files runtime
+%doc README LICENSE Changes
 %{_bindir}/ocamlrun
 %dir %{_libdir}/ocaml
 %{_libdir}/ocaml/VERSION
@@ -334,67 +364,36 @@ fi
 %{_libdir}/ocaml/threads/*.cmi
 %{_libdir}/ocaml/threads/*.cma
 %{_libdir}/ocaml/fedora-ocaml-release
-%doc README LICENSE Changes
+%exclude %{_libdir}/ocaml/graphicsX11.cmi
 
 
 %files source
+%doc LICENSE
 %{_libdir}/ocaml/*.ml
 
 
-%files camlp4
-%dir %{_libdir}/ocaml/camlp4
-%{_libdir}/ocaml/camlp4/*.cmi
-%{_libdir}/ocaml/camlp4/*.cma
-%{_libdir}/ocaml/camlp4/*.cmo
-%dir %{_libdir}/ocaml/camlp4/Camlp4Filters
-%{_libdir}/ocaml/camlp4/Camlp4Filters/*.cmi
-%{_libdir}/ocaml/camlp4/Camlp4Filters/*.cmo
-%dir %{_libdir}/ocaml/camlp4/Camlp4Parsers
-%{_libdir}/ocaml/camlp4/Camlp4Parsers/*.cmo
-%{_libdir}/ocaml/camlp4/Camlp4Parsers/*.cmi
-%dir %{_libdir}/ocaml/camlp4/Camlp4Printers
-%{_libdir}/ocaml/camlp4/Camlp4Printers/*.cmi
-%{_libdir}/ocaml/camlp4/Camlp4Printers/*.cmo
-%dir %{_libdir}/ocaml/camlp4/Camlp4Top
-%{_libdir}/ocaml/camlp4/Camlp4Top/*.cmi
-%{_libdir}/ocaml/camlp4/Camlp4Top/*.cmo
-
-
-%files camlp4-devel
-%{_bindir}/camlp4*
-%{_bindir}/mkcamlp4
-%if %{native_compiler}
-%{_libdir}/ocaml/camlp4/*.a
-%{_libdir}/ocaml/camlp4/*.cmxa
-%{_libdir}/ocaml/camlp4/*.cmx
-%{_libdir}/ocaml/camlp4/*.o
-%{_libdir}/ocaml/camlp4/Camlp4Filters/*.cmx
-%{_libdir}/ocaml/camlp4/Camlp4Filters/*.o
-%{_libdir}/ocaml/camlp4/Camlp4Parsers/*.cmx
-%{_libdir}/ocaml/camlp4/Camlp4Parsers/*.o
-%{_libdir}/ocaml/camlp4/Camlp4Printers/*.cmx
-%{_libdir}/ocaml/camlp4/Camlp4Printers/*.o
-%{_libdir}/ocaml/camlp4/Camlp4Top/*.cmx
-%{_libdir}/ocaml/camlp4/Camlp4Top/*.o
-%endif
-%{_mandir}/man1/*
-
-
 %files ocamldoc
+%doc LICENSE
+%doc ocamldoc/Changes.txt
 %{_bindir}/ocamldoc*
 %{_libdir}/ocaml/ocamldoc
-%doc ocamldoc/Changes.txt
 
 
 %files docs
 %doc refman.pdf htmlman
 %{_infodir}/*
-%if %{native_compiler}
+%{_mandir}/man1/*
 %{_mandir}/man3/*
-%endif
+
+
+#%files emacs
+#%doc emacs/README
+#%{_datadir}/emacs/site-lisp/*
+#%{_bindir}/ocamltags
 
 
 %files compiler-libs
+%doc LICENSE
 %dir %{_libdir}/ocaml/compiler-libs
 %{_libdir}/ocaml/compiler-libs/*.cmi
 %{_libdir}/ocaml/compiler-libs/*.cmo
@@ -408,18 +407,177 @@ fi
 
 
 %changelog
-* Wed Sep 25 2013 Akshay Ramani <akshay.ramani@citrix.com>
-- Update to OCaml 4.01.0
+* Mon Nov 30 2015 Jon Ludlam <jonathan.ludlam@citrix.com> - 4.02.2-5
+- Remove emacs package
 
-* Thu Jun 27 2013 Si Beaumont <simon.beaumont@citrix.com>
-- Rebuilt for XenServer use case:
-  - Removed requirements for the following:
-        tcl-devel, tk-devel, emacs, libICE-devel, libSM-devel, libX11-devel,
-        libXaw-devel, libXext-devel, libXft-devel, libXmu-devel,
-        libXrender-devel, libXt-devel, mesa-libGL-devel, mesa-libGLU-devel,
-        chrpath, git
-  - Remove git patch-management related patches
-  - Reinstate buildroot directive
+* Mon Jun 29 2015 Richard W.M. Jones <rjones@redhat.com> - 4.02.2-4
+- Couple of minor build fixes for ppc64 and ppc64le.
+- ppc64/ppc64le: Fix behaviour of Int64.max_int ÷ -1 (RHBZ#1236615).
+
+* Fri Jun 26 2015 Richard W.M. Jones <rjones@redhat.com> - 4.02.2-2
+- Enable the test suite during the build.  Currently the results are
+  only advisory.
+
+* Tue Jun 23 2015 Richard W.M. Jones <rjones@redhat.com> - 4.02.2-1
+- New upstream version: 4.02.2.
+- No need for a mass rebuild, since this version is identical to RC1.
+
+* Tue Jun 16 2015 Richard W.M. Jones <rjones@redhat.com> - 4.02.2-0.rc1.1
+- New upstream version: 4.02.2+rc1.
+- Dropped two aarch64 patches which are now included upstream.
+- Includes libasmrun_shared.so (RHBZ#1195025).
+
+* Wed Jun 10 2015 Richard W.M. Jones <rjones@redhat.com> - 4.02.1-7
+- aarch64: Use upstream version of patch that fixes RHBZ#1224815.
+
+* Tue Jun 09 2015 Richard W.M. Jones <rjones@redhat.com> - 4.02.1-6
+- aarch64: AArch64 backend generates invalid asm: conditional branch
+  out of range (RHBZ#1224815).
+
+* Thu May 28 2015 Richard W.M. Jones <rjones@redhat.com> - 4.02.1-5
+- ppc64le: Fix calling convention of external functions with > 8 parameters
+  (RHBZ#1225995).
+
+* Wed May  6 2015 Richard W.M. Jones <rjones@redhat.com> - 4.02.1-4
+- Fix gdb stack traces on aarch64 (upstream PR6490).  Thanks: Mark Shinwell.
+
+* Thu Apr 23 2015 Richard W.M. Jones <rjones@redhat.com> - 4.02.1-3
+- ppc, ppc64, ppc64le: Properly mark stack as non-executable.
+  The upstream fix was not applied completely.
+
+* Thu Feb 26 2015 Richard W.M. Jones <rjones@redhat.com> - 4.02.1-2
+- Kill dependency on rpm-build.  Added in 2009, apparently by accident.
+  (Thanks: Jon Ludlam)
+
+* Mon Feb 16 2015 Richard W.M. Jones <rjones@redhat.com> - 4.02.1-1
+- New upstream version 4.02.1.
+- Rebase patches on top.
+
+* Fri Oct 24 2014 Richard W.M. Jones <rjones@redhat.com> - 4.02.0-6
+- Fixes for ppc64/ppc64le (RHBZ#1156300).
+
+* Mon Oct 20 2014 Richard W.M. Jones <rjones@redhat.com> - 4.02.0-4
+- ocaml-emacs should require emacs(bin) (RHBZ#1154513).
+
+* Thu Sep 11 2014 Richard W.M. Jones <rjones@redhat.com> - 4.02.0-3
+- Use -fno-strict-aliasing when building the compiler (RHBZ#990540).
+- ppc, ppc64, ppc64le: Mark stack as non-executable.
+
+* Tue Sep  9 2014 Richard W.M. Jones <rjones@redhat.com> - 4.02.0-2
+- Fix bug in argument parsing (RHBZ#1139790).
+
+* Sat Aug 30 2014 Richard W.M. Jones <rjones@redhat.com> - 4.02.0-1
+- New upstream OCaml 4.02.0 final.
+- Add patch for ocaml-camlimages
+  (see http://caml.inria.fr/mantis/view.php?id=6517)
+
+* Fri Aug 22 2014 Richard W.M. Jones <rjones@redhat.com> - 4.02.0-0.11.gitc48fc015
+- Rebase on top of OCaml 4.02+rc1 (same as git commit c48fc015).
+
+* Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.02.0-0.10.git10e45753
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
+* Fri Aug 08 2014 Richard W.M. Jones <rjones@redhat.com> - 4.02.0-0.9
+- Add fix for Coq build issue:
+  http://caml.inria.fr/mantis/view.php?id=6507
+
+* Fri Aug 01 2014 Richard W.M. Jones <rjones@redhat.com> - 4.02.0-0.8
+- Rebase on top of 4.02.0 beta commit 10e45753.
+
+* Sat Jul 19 2014 Richard W.M. Jones <rjones@redhat.com> - 4.02.0-0.7
+- Rebase on top of 4.02.0 beta commit c4f3a6c7.
+- Remove the patch to disable CSE, since that problem is fixed upstream.
+- Remove the patch fixing caml_callback2 on aarch64 since that patch is
+  now upstream.
+- Make the compiler depend on ocaml-runtime explicitly.
+
+* Tue Jul 15 2014 Richard W.M. Jones <rjones@redhat.com> - 4.02.0-0.5
+- Disable CSE optimization which is broken on armv7hl and aarch64.
+- Fix broken caml_callback2 on aarch64
+  http://caml.inria.fr/mantis/view.php?id=6489
+
+* Sat Jul 12 2014 Richard W.M. Jones <rjones@redhat.com> - 4.02.0-0.1
+- Update to 4.02.0-beta1 + patches from the upstream 4.02 branch.
+- REMOVED labltk and camlp4 packages, since these are now packaged
+  separately upstream.
+- Upstream includes fix for stack alignment issues on i686, so remove hack.
+- Upstream now uses mkstemp where available, so patch removed.
+- Upstream includes Aarch64 backend, so remove our own backport.
+- Drop BR on ocaml-srpm-macros, since it is now included in Fedora.
+
+* Thu Jun 26 2014 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-20
+- BR binutils-devel so ocamlobjinfo supports *.cmxs files (RHBZ#1113735).
+
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.01.0-19
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
+* Wed May 21 2014 Jaroslav Škarvada <jskarvad@redhat.com> - 4.01.0-18
+- Rebuilt for https://fedoraproject.org/wiki/Changes/f21tcl86
+
+* Sat May 10 2014 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-17
+- Mark stack as non-executable on ARM (32 bit) and Aarch64.
+
+* Tue Apr 22 2014 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-16
+- Remove ocaml-srpm-macros subpackage.
+  This is now a separate package, see RHBZ#1087893.
+
+* Tue Apr 15 2014 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-15
+- Fix s390x builds (no native compiler).
+
+* Tue Apr 15 2014 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-14
+- Remove ExclusiveArch.
+- Add ocaml-srpm-macros subpackage containing arch macros.
+- See: RHBZ#1087794
+
+* Mon Apr 14 2014 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-13
+- Fix aarch64 relocation problems again.
+  Earlier patch was dropped accidentally.
+
+* Wed Apr  9 2014 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-12
+- Add ppc64le support (thanks: Michel Normand) (RHBZ#1077767).
+
+* Tue Apr  1 2014 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-11
+- Fix --flag=arg patch (thanks: Anton Lavrik, Ignas Vyšniauskas).
+
+* Mon Mar 24 2014 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-10
+- Include a fix for aarch64 relocation problems
+  http://caml.inria.fr/mantis/view.php?id=6283
+
+* Wed Jan  8 2014 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-8
+- Don't use ifarch around Patch lines, as it means the patch files
+  don't get included in the spec file.
+
+* Mon Jan  6 2014 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-7
+- Work around gcc stack alignment issues, see
+  http://caml.inria.fr/mantis/view.php?id=5700
+
+* Tue Dec 31 2013 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-6
+- Add aarch64 (arm64) code generator.
+
+* Thu Nov 21 2013 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-4
+- Add bundled(md5-plumb) (thanks: Tomas Mraz).
+- Add NON-upstream (but being sent upstream) patch to allow --flag=arg
+  as an alternative to --flag arg (RHBZ#1028650).
+
+* Sat Sep 14 2013 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-3
+- Disable -lcurses.  This is not actually used, just linked with unnecessarily.
+
+* Sat Sep 14 2013 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-2
+- Fix the build on ppc64.
+
+* Fri Sep 13 2013 Richard W.M. Jones <rjones@redhat.com> - 4.01.0-1
+- Update to new major version OCaml 4.01.0.
+- Rebase patches.
+- Remove bogus Requires 'ncurses-devel'.  The base ocaml package already
+  pulls in the library implicitly.
+- Remove bogus Requires 'gdbm-devel'.  Nothing in the source mentions gdbm.
+- Use mkstemp instead of mktemp in ocamlyacc.
+- Add LICENSE as doc to some subpackages to keep rpmlint happy.
+- Remove .ignore file from some packages.
+- Remove period from end of Summary.
+
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.00.1-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.00.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
@@ -478,7 +636,7 @@ fi
 - Include svn rev 12548 to fix invalid generation of Thumb-2 branch
   instruction TBH (upstream PR#5623, RHBZ#821153).
 
-* Wed May 29 2012 Richard W.M. Jones <rjones@redhat.com> 3.12.1-8
+* Wed May 30 2012 Richard W.M. Jones <rjones@redhat.com> 3.12.1-8
 - Modify the ppc64 patch to reduce the delta between power64 and
   upstream power backends.
 - Clean up the spec file and bring it up to modern standards.
@@ -630,7 +788,7 @@ fi
 * Tue Nov 18 2008 Richard W.M. Jones <rjones@redhat.com> - 3.11.0+beta1-1
 - Rebuild for major new upstream release of 3.11.0 for Fedora 11.
 
-* Thu Aug 29 2008 Richard W.M. Jones <rjones@redhat.com> - 3.10.2-5
+* Fri Aug 29 2008 Richard W.M. Jones <rjones@redhat.com> - 3.10.2-5
 - Rebuild with patch fuzz.
 
 * Mon Jun  9 2008 Richard W.M. Jones <rjones@redhat.com> - 3.10.2-4
@@ -722,7 +880,7 @@ fi
 * Sun May 22 2005 Jeremy Katz <katzj@redhat.com> - 3.08.3-3
 - rebuild on all arches
 
-* Fri Apr  7 2005 Michael Schwendt <mschwendt[AT]users.sf.net>
+* Fri Apr  8 2005 Michael Schwendt <mschwendt[AT]users.sf.net>
 - rebuilt
 
 * Sat Mar 26 2005 Gerard Milmeister <gemi@bluewin.ch> - 3.08.3-1
