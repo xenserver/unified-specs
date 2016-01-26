@@ -2,7 +2,7 @@
 %define debug_package %{nil}
 
 Name:           ocaml-async-unix
-Version:        111.28.00
+Version:        112.35.00
 Release:        1%{?dist}
 Summary:        Jane Street Capital's asynchronous execution library (core)
 
@@ -28,6 +28,8 @@ BuildRequires:  ocaml-pa-pipebang-devel
 BuildRequires:  ocaml-async-kernel-devel
 BuildRequires:  ocaml-sexplib-devel
 BuildRequires:  ocaml-enumerate-devel
+BuildRequires:  ocaml-custom-printf-devel
+BuildRequires:  ocaml-pa-structural-sexp-devel
 
 %define _use_internal_dependency_generator 0
 %define __find_requires /usr/lib/rpm/ocaml-find-requires.sh
@@ -85,6 +87,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc LICENSE.txt THIRD-PARTY.txt INRIA-DISCLAIMER.txt
 %{_libdir}/ocaml/async_unix
+%{_libdir}/ocaml/stublibs/dllasync_unix_stubs.so
+%{_libdir}/ocaml/stublibs/dllasync_unix_stubs.so.owner
 %if %opt
 %exclude %{_libdir}/ocaml/async_unix/*.a
 %exclude %{_libdir}/ocaml/async_unix/*.cmxa

@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           ocaml-sexplib
-Version:        111.17.00
+Version:        112.35.00
 Release:        1%{?dist}
 Summary:        Convert values to and from s-expressions in OCaml
 

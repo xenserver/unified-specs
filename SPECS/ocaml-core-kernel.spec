@@ -2,7 +2,7 @@
 %define debug_package %{nil}
 
 Name:           ocaml-core-kernel
-Version:        111.28.00
+Version:        112.35.00
 Release:        1%{?dist}
 Summary:        System-independent part of Jane Street's Core.
 
@@ -10,7 +10,6 @@ Group:          Development/Libraries
 License:        Apache Software License 2.0
 URL:            https://github.com/janestreet/core_kernel
 Source0:        https://ocaml.janestreet.com/ocaml-core/%{version}/individual/core_kernel-%{version}.tar.gz
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 ExcludeArch:    sparc64 s390 s390x
 
 BuildRequires:  ocaml >= 4.00.1
@@ -30,6 +29,7 @@ BuildRequires:  ocaml-enumerate-devel
 BuildRequires:  ocaml-sexplib-devel
 BuildRequires:  ocaml-typerep-devel
 BuildRequires:  ocaml-variantslib-devel
+BuildRequires:  ocaml-custom-printf-devel
 BuildRequires:  chrpath
 
 %define _use_internal_dependency_generator 0

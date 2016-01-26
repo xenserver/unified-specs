@@ -23,6 +23,8 @@ BuildRequires:  ocaml-fieldslib-devel
 BuildRequires:  ocaml-base64-devel
 BuildRequires:  ocaml-cmdliner-devel
 BuildRequires:  ocaml-conduit-devel
+BuildRequires:  ocaml-pa-structural-sexp-devel
+BuildRequires:  ocaml-async-rpc-kernel-devel
 
 %description
 An HTTP library for OCaml.

@@ -2,7 +2,7 @@
 %define debug_package %{nil}
 
 Name:           ocaml-pa-test
-Version:        111.08.00
+Version:        112.24.00
 Release:        1%{?dist}
 Summary:        Jane Street's pa_test
 
@@ -18,6 +18,7 @@ BuildRequires:  ocaml-findlib-devel
 BuildRequires:  ocaml-camlp4-devel
 BuildRequires:  ocaml-sexplib-devel
 BuildRequires:  ocaml-type-conv
+BuildRequires:  ocaml-herelib-devel
 
 %define _use_internal_dependency_generator 0
 %define __find_requires /usr/lib/rpm/ocaml-find-requires.sh

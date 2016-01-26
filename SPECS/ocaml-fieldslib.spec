@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           ocaml-fieldslib
-Version:        109.20.00
+Version:        109.20.03
 Release:        1%{?dist}
 Summary:        OCaml record fields as first class values
 

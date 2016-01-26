@@ -2,7 +2,7 @@
 %define debug_package %{nil}
 
 Name:           ocaml-typerep
-Version:        111.17.00
+Version:        112.35.00
 Release:        1%{?dist}
 Summary:        Runtime types for OCaml.
 
@@ -78,20 +78,12 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc LICENSE.txt  THIRD-PARTY.txt INRIA-DISCLAIMER.txt
 %{_libdir}/ocaml/typerep_lib
-%{_libdir}/ocaml/typerep_extended
-%{_libdir}/ocaml/typerep_generics_sexprep
 %if %opt
 %exclude %{_libdir}/ocaml/typerep_lib/*.a
 %exclude %{_libdir}/ocaml/typerep_lib/*.cmxa
-%exclude %{_libdir}/ocaml/typerep_extended/*.a
-%exclude %{_libdir}/ocaml/typerep_extended/*.cmxa
-%exclude %{_libdir}/ocaml/typerep_generics_sexprep/*.cmxa
 %endif
 %exclude %{_libdir}/ocaml/typerep_lib/*.ml
 %exclude %{_libdir}/ocaml/typerep_lib/*.mli
-%exclude %{_libdir}/ocaml/typerep_extended/*.ml
-%exclude %{_libdir}/ocaml/typerep_extended/*.mli
-%exclude %{_libdir}/ocaml/typerep_generics_sexprep/*.mli
 
 
 %files devel
@@ -100,15 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %if %opt
 %{_libdir}/ocaml/typerep_lib/*.a
 %{_libdir}/ocaml/typerep_lib/*.cmxa
-%{_libdir}/ocaml/typerep_extended/*.a
-%{_libdir}/ocaml/typerep_extended/*.cmxa
-%{_libdir}/ocaml/typerep_generics_sexprep/*.cmxa
 %endif
 %{_libdir}/ocaml/typerep_lib/*.ml
 %{_libdir}/ocaml/typerep_lib/*.mli
-%{_libdir}/ocaml/typerep_extended/*.ml
-%{_libdir}/ocaml/typerep_extended/*.mli
-%{_libdir}/ocaml/typerep_generics_sexprep/*.mli
 
 %changelog
 * Tue Oct 14 2014 David Scott <dave.scott@citrix.com> - 111.17.00-1

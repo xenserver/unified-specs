@@ -2,7 +2,7 @@
 %define debug_package %{nil}
 
 Name:           ocaml-text
-Version:        0.6
+Version:        0.8
 Release:        2%{?dist}
 Summary:        Library for dealing with unicode text conveniently
 
@@ -34,7 +34,7 @@ developing applications that use %{name}.
 %build
 ./configure --destdir $RPM_BUILD_ROOT --prefix /usr
 make
-make doc
+# make doc - this relies on 'rubber', not in CentOS
 
 %install
 export OCAMLFIND_DESTDIR=$RPM_BUILD_ROOT%{_libdir}/ocaml
@@ -50,13 +50,13 @@ rm -rf $RPM_BUILD_ROOT/usr/local/share/doc
 %exclude %{_libdir}/ocaml/text/*.cmxa
 %exclude %{_libdir}/ocaml/text/*.cmx
 %exclude %{_libdir}/ocaml/text/*.mli
-%{_libdir}/ocaml/stublibs/dlltext-bigarray_stubs.so
-%{_libdir}/ocaml/stublibs/dlltext-bigarray_stubs.so.owner
+%{_libdir}/ocaml/stublibs/dllbigarray_stubs.so
+%{_libdir}/ocaml/stublibs/dllbigarray_stubs.so.owner
 %{_libdir}/ocaml/stublibs/dlltext_stubs.so
 %{_libdir}/ocaml/stublibs/dlltext_stubs.so.owner
 
 %files devel
-%doc /usr/share/doc/ocaml-text
+#%doc /usr/share/doc/ocaml-text
 %{_libdir}/ocaml/text/*.a
 %{_libdir}/ocaml/text/*.cmx
 %{_libdir}/ocaml/text/*.cmxa

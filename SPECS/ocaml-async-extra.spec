@@ -2,7 +2,7 @@
 %define debug_package %{nil}
 
 Name:           ocaml-async-extra
-Version:        111.28.00
+Version:        112.35.00
 Release:        1%{?dist}
 Summary:        Jane Street Capital's asynchronous execution library (core)
 
@@ -30,6 +30,9 @@ BuildRequires:  ocaml-sexplib-devel
 BuildRequires:  ocaml-custom-printf-devel
 BuildRequires:  ocaml-comparelib-devel
 BuildRequires:  ocaml-enumerate-devel
+BuildRequires:  ocaml-custom-printf-devel
+BuildRequires:  ocaml-async-rpc-kernel-devel
+BuildRequires:  ocaml-pa-structural-sexp-devel
 
 %define _use_internal_dependency_generator 0
 %define __find_requires /usr/lib/rpm/ocaml-find-requires.sh
@@ -43,6 +46,9 @@ Jane Street Capital's asynchronous execution library (core).
 Summary:        Development files for %{name}
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
+Requires:       ocaml-async-rpc-kernel-devel
+Requires:       ocaml-pa-structural-sexp-devel
+Requires:       ocaml-custom-printf-devel
 
 
 %description    devel

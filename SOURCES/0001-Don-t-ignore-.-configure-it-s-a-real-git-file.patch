@@ -1,0 +1,24 @@
+From 6fbdb9e95ecd4654067565afe0c0b12fbeed3336 Mon Sep 17 00:00:00 2001
+From: "Richard W.M. Jones" <rjones@redhat.com>
+Date: Tue, 24 Jun 2014 22:29:38 +0100
+Subject: [PATCH 01/19] Don't ignore ./configure, it's a real git file.
+
+---
+ .gitignore | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/.gitignore b/.gitignore
+index 87f7cda..8aad7c2 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -19,7 +19,6 @@
+ /.depend
+ /.depend.nt
+ /.DS_Store
+-/configure
+ /ocamlc
+ /ocamlc.opt
+ /expunge
+-- 
+2.3.1
+

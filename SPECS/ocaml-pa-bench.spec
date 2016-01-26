@@ -2,7 +2,7 @@
 %define debug_package %{nil}
 
 Name:           ocaml-pa-bench
-Version:        111.28.00
+Version:        112.06.00
 Release:        1%{?dist}
 Summary:        Syntax extension for inline benchmarks.
 
