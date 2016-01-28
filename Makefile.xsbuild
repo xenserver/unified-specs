@@ -58,7 +58,7 @@ $(MY_OUTPUT_DIR)/xen.inc: $(MY_OUTPUT_DIRSTAMP)
 	  echo XEN_PKG_VERSION := $(XEN_VERSION)-$(XEN_RELEASE); \
        	  echo XEN_PKG_ARCH := $(DOMAIN0_ARCH_OPTIMIZED); \
        	  echo XEN_PKG_FILE := RPMS/$(DOMAIN0_ARCH_OPTIMIZED)/$(OUTPUT_RPM); \
-       	  echo XEN_VERSION := \$$\(XEN_VERSION\); \
+       	  echo XEN_VERSION := $(XEN_VERSION); \
        	} > $@.tmp; \
        	mv -f $@.tmp $@; \
        	}
