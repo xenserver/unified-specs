@@ -55,7 +55,7 @@ make install DESTDIR=%{buildroot}/%{_libdir}/ocaml
 
 %changelog
 * Wed Oct 28 2015 Si Beaumont <simon.beaumont@citrix.com> - 0.9.3-1
-- Package is now build using Oasis
+- Package is now built using Oasis
 
 * Fri May 30 2014 Euan Harris <euan.harris@citrix.com> - 0.9.2-2
 - Split files correctly between base and devel packages
