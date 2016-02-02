@@ -8,7 +8,7 @@ Summary:        OCaml record fields as first class values
 Group:          Development/Libraries
 License:        LGPLv2+ with exceptions and BSD
 URL:            https://ocaml.janestreet.com
-Source0:        https://ocaml.janestreet.com/ocaml-core/%{version}/individual/fieldslib-%{version}.tar.gz
+Source0:        https://ocaml.janestreet.com/ocaml-core/109.20.00/individual/fieldslib-%{version}.tar.gz
 
 BuildRequires:  ocaml >= 4.00.0
 BuildRequires:  ocaml-findlib

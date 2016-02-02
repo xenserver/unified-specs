@@ -9,7 +9,7 @@ Summary:        Jane Street Capital's asynchronous execution library (core)
 Group:          Development/Libraries
 License:        Apache Software License 2.0
 URL:            https://github.com/janestreet/async_unix
-Source0:        https://ocaml.janestreet.com/ocaml-core/%{version}/individual/async_unix-%{version}.tar.gz
+Source0:        https://ocaml.janestreet.com/ocaml-core/112.35/files/async_unix-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 ExcludeArch:    sparc64 s390 s390x
 
@@ -107,6 +107,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/ocaml/async_unix/*.mli
 
 %changelog
+* Fri Jan 22 2016 Jon Ludlam <jonathan.ludlam@citrix.com> - 112.35.00-1
+- Update to 112.35.00
+
 * Tue Oct 14 2014 David Scott <dave.scott@citrix.com> - 111.28.00-1
 - Update to 111.28.00
 
