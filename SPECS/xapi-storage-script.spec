@@ -80,16 +80,16 @@ fi
 * Fri Aug  7 2015 David Scott <dave.scott@citrix.com> - 0.11.0-1
 - Update to 0.11.0
 
-* Tue Aug  5 2015 David Scott <dave.scott@citrix.com> - 0.10.0-1
+* Tue Aug  4 2015 David Scott <dave.scott@citrix.com> - 0.10.0-1
 - Update to 0.10.0
 
 * Mon Jul 20 2015 David Scott <dave.scott@citrix.com> - 0.9.0-2
 - Backport robustness patch
 
-* Thu Jul 15 2015 David Scott <dave.scott@citrix.com> - 0.9.0-1
+* Wed Jul 15 2015 David Scott <dave.scott@citrix.com> - 0.9.0-1
 - Update to 0.9.0
 
-* Thu Jul 15 2015 David Scott <dave.scott@citrix.com> - 0.8.0-2
+* Wed Jul 15 2015 David Scott <dave.scott@citrix.com> - 0.8.0-2
 - Backport clone-on-boot fix
 
 * Wed Jul 15 2015 David Scott <dave.scott@citrix.com> - 0.8.0-1
