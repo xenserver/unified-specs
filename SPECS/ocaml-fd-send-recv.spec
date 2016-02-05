@@ -6,7 +6,7 @@ Release:        1%{?dist}
 Summary:        Bindings to sendmsg/recvmsg for fd passing under Linux
 License:        LGPL
 URL:            https://github.com/xapi-project/ocaml-fd-send-recv
-Source0:        https://github.com/xapi-project/%{name}/archive/%{name}-%{version}/%{name}-%{version}.tar.gz
+Source0:        https://github.com/xapi-project/%{name}/archive/v%{version}/%{name}-%{version}.tar.gz
 BuildRequires:  ocaml
 BuildRequires:  ocaml-findlib
 BuildRequires:  ocaml-ocamldoc
