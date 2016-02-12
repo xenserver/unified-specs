@@ -101,7 +101,7 @@ cp storage/api/__init__.py storage/api/datapath.py storage/api/volume.py storage
 * Wed Sep  9 2015 David Scott <dave.scott@citrix.com> - 0.7-1
 - Update to 0.7
 
-* Tue Aug  5 2015 David Scott <dave.scott@citrix.com> - 0.6-1
+* Tue Aug  4 2015 David Scott <dave.scott@citrix.com> - 0.6-1
 - Update to 0.6
 
 * Wed Jul 15 2015 David Scott <dave.scott@citrix.com> - 0.5-1

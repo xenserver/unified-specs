@@ -9,7 +9,7 @@ Summary:        Platform-independent core of Async RPC library
 Group:          Development/Libraries
 License:        Apache Software License 2.0
 URL:            https://github.com/janestreet/async_rpc_kernel
-Source0:        https://ocaml.janestreet.com/ocaml-core/112.35/individual/async_rpc_kernel-%{version}.tar.gz
+Source0:        https://ocaml.janestreet.com/ocaml-core/112.35/files/async_rpc_kernel-%{version}.tar.gz
 ExcludeArch:    sparc64 s390 s390x
 
 BuildRequires:  ocaml >= 4.00.1
@@ -111,5 +111,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/ocaml/async_rpc_kernel/*.mli
 
 %changelog
+* Fri Jan 22 2016 Jon Ludlam <jonathan.ludlam@citrix.com> - 112.35.00-1
+- Update to 112.35.00
+
 * Thu Nov 12 2015 Jon Ludlam <jonathan.ludlam@citrix.com> - 112.35.00-1
 - Initial package

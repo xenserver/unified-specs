@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           ocaml-qmp
-Version:        0.9.3
+Version:        0.9.4
 Release:        1%{?dist}
 Summary:        Pure OCaml implementation of the Qemu Message Protocol (QMP)
 License:        LGPL2.1 + OCaml linking exception
@@ -32,17 +32,19 @@ developing applications that use %{name}.
 %setup -q
 
 %build
+./configure --destdir=%{buildroot} --prefix=%{_prefix}
 make
 
 %install
 export OCAMLFIND_DESTDIR=%{buildroot}/%{_libdir}/ocaml
 mkdir -p $OCAMLFIND_DESTDIR
-make install DESTDIR=%{buildroot}/%{_libdir}/ocaml
+make install DESTDIR=%{buildroot}
 
 %files
 %doc ChangeLog
 %doc README.md
 %doc LICENSE
+%{_bindir}/qmp-cli
 %{_libdir}/ocaml/qmp
 %exclude %{_libdir}/ocaml/qmp/*.a
 %exclude %{_libdir}/ocaml/qmp/*.cmxa
@@ -54,6 +56,9 @@ make install DESTDIR=%{buildroot}/%{_libdir}/ocaml
 %{_libdir}/ocaml/qmp/*.cmxa
 
 %changelog
+* Wed Feb 03 2016 Euan Harris <euan.harris@citrix.com> - 0.9.4-1
+- Update build scripts to install qmp-cli binary correctly
+
 * Wed Oct 28 2015 Si Beaumont <simon.beaumont@citrix.com> - 0.9.3-1
 - Package is now built using Oasis
 

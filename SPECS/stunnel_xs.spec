@@ -1,13 +1,13 @@
 Summary: An SSL-encrypting socket wrapper
 Name: stunnel_xs
 Version: 4.56
-Release: 4%{?dist}.xs1
+Release: 5%{?dist}.xs1
 License: GPLv2
 Group: Applications/Internet
 URL: http://www.stunnel.org/
-Source0: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz
-Source1: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.asc
-Source7: https://www.stunnel.org/downloads/stunnel-%{version}.tar.gz.sha256
+Source0: https://www.stunnel.org/downloads/archive/4.x/stunnel-%{version}.tar.gz
+Source1: https://www.stunnel.org/downloads/archive/4.x/stunnel-%{version}.tar.gz.asc
+Source7: https://www.stunnel.org/downloads/archive/4.x/stunnel-%{version}.tar.gz.sha256
 Source2: Certificate-Creation
 Source3: sfinger.xinetd
 Source4: stunnel-sfinger.conf
@@ -86,6 +86,9 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_sysconfdir}/stunnel/*
 
 %changelog
+* Tue Feb 02 2016 Euan Harris <euan.harris@citrix.com> - 4.56-5.xs1
+- Use correct source URLs
+
 * Fri Jun 05 2015 Thomas Sanders <thomas.sanders@citrix.com> - 4.56-4.xs1
 - Rename package to stunnel_xs
 - Add pollhup.patch from Ross Lagerwall

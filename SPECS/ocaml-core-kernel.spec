@@ -9,7 +9,7 @@ Summary:        System-independent part of Jane Street's Core.
 Group:          Development/Libraries
 License:        Apache Software License 2.0
 URL:            https://github.com/janestreet/core_kernel
-Source0:        https://ocaml.janestreet.com/ocaml-core/%{version}/individual/core_kernel-%{version}.tar.gz
+Source0:        https://ocaml.janestreet.com/ocaml-core/112.35/files/core_kernel-%{version}.tar.gz
 ExcludeArch:    sparc64 s390 s390x
 
 BuildRequires:  ocaml >= 4.00.1
@@ -116,6 +116,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/ocaml/core_kernel/*.mli
 
 %changelog
+* Fri Jan 22 2016 Jon Ludlam <jonathan.ludlam@citrix.com> - 112.35.00-1
+- Update to 112.35.00
+
 * Tue Oct 14 2014 David Scott <dave.scott@citrix.com> - 111.28.00-1
 - Update to 111.28.00
 
