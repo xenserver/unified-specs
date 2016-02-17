@@ -26,6 +26,7 @@ URL:           http://forge.ocamlcore.org/projects/camlzip/
 Group:         Development/Libraries/Other
 Source0:       http://forge.ocamlcore.org/projects/camlzip/%{upstreamname}-%{version}.tar.gz
 Patch:         camlzip_nolocalldconf.patch
+Patch2:        camlzip-uint32.patch
 BuildRequires: ocaml
 BuildRequires: ocaml-findlib
 BuildRequires: zlib-devel
@@ -48,6 +49,7 @@ Development file for the OCaml ZIP interface
 %prep
 %setup -q -n %{upstreamname}-%{version}
 %patch
+%patch2 -p1
 
 %build
 %{__make} ZLIB_LIBDIR=%{_libdir} ZLIB_INCLUDE=%{_includedir} INSTALLDIR=$RPM_BUILD_ROOT%{_libdir}/ocaml/zip

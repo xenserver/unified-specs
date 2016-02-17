@@ -2,7 +2,7 @@
 %define debug_package %{nil}
 
 Name:           ocaml-herelib
-Version:        109.35.02
+Version:        112.35.00
 Release:        1%{?dist}
 Summary:        Syntax extension for inserting the current location.
 

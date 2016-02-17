@@ -1,21 +1,23 @@
 %define opt %(test -x %{_bindir}/ocamlopt && echo 1 || echo 0)
 %define debug_package %{nil}
 
-Name:           ocaml-pa-ounit
+Name:           ocaml-pa-structural-sexp
 Version:        112.35.00
 Release:        1%{?dist}
-Summary:        Syntax extension for in-line tests in code.
+Summary:        Jane Street's pa_structural_sexp
 
 Group:          Development/Libraries
 License:        Apache Software License 2.0
-URL:            https://github.com/janestreet/pa_ounit
-Source0:        https://ocaml.janestreet.com/ocaml-core/%{version}/individual/pa_ounit-%{version}.tar.gz
+URL:            https://github.com/janestreet/pa_structural_sexp
+Source0:        https://ocaml.janestreet.com/ocaml-core/112.35/files/pa_structural_sexp-%{version}.tar.gz
+
 ExcludeArch:    sparc64 s390 s390x
 
 BuildRequires:  ocaml >= 4.00.1
 BuildRequires:  ocaml-findlib-devel
 BuildRequires:  ocaml-camlp4-devel
-BuildRequires:  ocaml-ounit-devel
+BuildRequires:  ocaml-sexplib-devel
+BuildRequires:  ocaml-type-conv
 
 %define _use_internal_dependency_generator 0
 %define __find_requires /usr/lib/rpm/ocaml-find-requires.sh
@@ -23,7 +25,7 @@ BuildRequires:  ocaml-ounit-devel
 
 
 %description
-Pa_ounit is a syntax extension that helps writing in-line tests in ocaml code.
+Jane Street's pa_structural_sexp.
 
 
 %package        devel
@@ -38,7 +40,7 @@ developing applications that use %{name}.
 
 
 %prep
-%setup -q -n pa_ounit-%{version}
+%setup -q -n pa_structural_sexp-%{version}
 
 %build
 ocaml setup.ml -configure --prefix %{_prefix} \
@@ -50,7 +52,8 @@ ocaml setup.ml -configure --prefix %{_prefix} \
       --mandir %{_mandir} \
       --datadir %{_datadir} \
       --localstatedir %{_localstatedir} \
-      --sharedstatedir %{_sharedstatedir}
+      --sharedstatedir %{_sharedstatedir} \
+      --destdir $RPM_BUILD_ROOT
 ocaml setup.ml -build
 
 
@@ -72,30 +75,24 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc LICENSE.txt  THIRD-PARTY.txt INRIA-DISCLAIMER.txt readme.md
-%{_libdir}/ocaml/pa_ounit
+%doc LICENSE.txt INRIA-DISCLAIMER.txt
+%{_libdir}/ocaml/pa_structural_sexp
 %if %opt
-%exclude %{_libdir}/ocaml/pa_ounit/*.a
-%exclude %{_libdir}/ocaml/pa_ounit/*.cmxa
+%exclude %{_libdir}/ocaml/pa_structural_sexp/*.a
+%exclude %{_libdir}/ocaml/pa_structural_sexp/*.cmxa
 %endif
-%exclude %{_libdir}/ocaml/pa_ounit/*.ml
-%exclude %{_libdir}/ocaml/pa_ounit/*.mli
+%exclude %{_libdir}/ocaml/pa_structural_sexp/*.mli
 
 
 %files devel
 %defattr(-,root,root,-)
-%doc LICENSE.txt  THIRD-PARTY.txt INRIA-DISCLAIMER.txt readme.md
+%doc LICENSE.txt INRIA-DISCLAIMER.txt
 %if %opt
-%{_libdir}/ocaml/pa_ounit/*.a
-%{_libdir}/ocaml/pa_ounit/*.cmxa
+%{_libdir}/ocaml/pa_structural_sexp/*.a
+%{_libdir}/ocaml/pa_structural_sexp/*.cmxa
 %endif
-%{_libdir}/ocaml/pa_ounit/*.ml
-%{_libdir}/ocaml/pa_ounit/*.mli
-
+%{_libdir}/ocaml/pa_structural_sexp/*.mli
 
 %changelog
-* Tue Oct 14 2014 David Scott <dave.scott@citrix.com> - 111.28.00-1
-- Update to 111.28.00
-
-* Wed Jan 01 2014 Edvard Fagerholm <edvard.fagerholm@gmail.com> - 109.53.02-1
-- Initial package for Fedora 20
+* Thu Nov 12 2015 Jon Ludlam <jonathan.ludlam@citrix.com> - 112.35.00-1
+- Initial package
