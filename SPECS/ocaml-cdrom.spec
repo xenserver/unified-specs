@@ -1,15 +1,15 @@
 %global debug_package %{nil}
 
 Name:           ocaml-cdrom
-Version:        0.9.1
-Release:        3%{?dist}
+Version:        0.9.2
+Release:        1%{?dist}
 Summary:        Query the state of CDROM devices
 License:        LGPL2.1 + OCaml linking exception
 URL:            https://github.com/xapi-project/cdrom
-Source0:        https://github.com/xapi-project/cdrom/archive/cdrom-%{version}/cdrom-%{version}.tar.gz
+Source0:        https://github.com/xapi-project/cdrom/archive/v%{version}/cdrom-%{version}.tar.gz
+BuildRequires:  oasis
 BuildRequires:  ocaml
 BuildRequires:  ocaml-findlib
-BuildRequires:  ocaml-obuild
 
 %description
 Simple C bindings which allow the state of CDROM devices (and discs
@@ -27,24 +27,26 @@ developing applications that use %{name}.
 %setup -q -n cdrom-%{version}
 
 %build
+./configure --destdir=%{buildroot} --prefix=%{_prefix}
 make
 
 %install
-mkdir -p %{buildroot}/%{_libdir}/ocaml
-mkdir -p %{buildroot}/%{_libdir}/ocaml/stublibs
+export OCAMLFIND_DESTDIR=%{buildroot}%{_libdir}/ocaml
 export OCAMLFIND_LDCONF=ignore
-make install DESTDIR=%{buildroot}/%{_libdir}/ocaml
+mkdir -p $OCAMLFIND_DESTDIR $OCAMLFIND_DESTDIR/stublibs 
+make install DESTDIR=%{buildroot}
 
 %files
 %doc ChangeLog 
 %doc README.md
+%{_bindir}/query-cdrom
 %{_libdir}/ocaml/cdrom
 %exclude %{_libdir}/ocaml/cdrom/*.a
 %exclude %{_libdir}/ocaml/cdrom/*.cmxa
 %exclude %{_libdir}/ocaml/cdrom/*.cmx
 %exclude %{_libdir}/ocaml/cdrom/*.mli
-%{_libdir}/ocaml/stublibs/dllstubs_cdrom.so
-%{_libdir}/ocaml/stublibs/dllstubs_cdrom.so.owner
+%{_libdir}/ocaml/stublibs/dllcdrom_stubs.so
+%{_libdir}/ocaml/stublibs/dllcdrom_stubs.so.owner
 
 %files devel
 %{_libdir}/ocaml/cdrom/*.a
@@ -53,6 +55,9 @@ make install DESTDIR=%{buildroot}/%{_libdir}/ocaml
 %{_libdir}/ocaml/cdrom/*.mli
 
 %changelog
+* Fri Feb 05 2016 Euan Harris <euan.harris@citrix.com> - 0.9.2-1
+- Switch to Oasis
+
 * Fri May 30 2014 Euan Harris <euan.harris@citrix.com> - 0.9.1-3
 - Split files correctly between base and devel packages
 

@@ -1,10 +1,10 @@
 Name:           ocaml-sha
 Version:        1.9
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        OCaml SHA
 License:        LGPL2.1
-URL:            https://github.com/vincenthz/ocaml-sha
-Source0:        https://github.com/vincenthz/ocaml-sha/archive/ocaml-sha-v%{version}/%{name}-%{version}.tar.gz
+URL:            https://github.com/xapi-project/ocaml-sha
+Source0:        https://github.com/xapi-project/%{name}/archive/v%{version}/%{name}-%{version}.tar.gz
 BuildRequires:  ocaml
 BuildRequires:  ocaml-findlib
 
@@ -44,6 +44,9 @@ make install
 %{_libdir}/ocaml/sha/*.cmxa
 
 %changelog
+* Mon Feb 08 2016 Euan Harris <euan.harris@citrix.com> - 1.9-3
+- Change source URL to point at xapi-project clone of ocaml-sha
+
 * Tue Apr 22 2014 Euan Harris <euan.harris@citrix.com> - 1.9-2
 - Split files correctly between base and devel packages
 
