@@ -56,7 +56,6 @@ make install DESTDIR=${buildroot}
 * Thu Jun 11 2015 John Else <john.else@citrix.com> - 1.5.4-1
 - Update to 1.5.4, fixing upgrade of records with option type fields
 
-%changelog
 * Tue Nov  4 2014 David Scott <dave.scott@citrix.com> - 1.5.3-1
 - Update to 1.5.3, with support for upgrade
 
