@@ -75,6 +75,9 @@
   },
   "SPECS/xen.spec": {
     "0": "/repos/xen-4.6#HEAD"
+  },
+  "SPECS/kernel.spec": {
+    "0": "/repos/linux-3.x#HEAD"
   }
 
 }
