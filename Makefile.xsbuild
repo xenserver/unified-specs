@@ -13,7 +13,7 @@ FETCH_EXTRA_FLAGS=--mirror file:///distfiles/ocaml2
 
 .PHONY: buildrpms build $(MY_OUTPUT_DIR)/xen.inc
 
-build: buildrpms /output/unified/SOURCES/MANIFEST $(BRANDING) $(MY_OUTPUT_DIR)/xen.inc
+build: buildrpms /output/unified/SOURCES/MANIFEST $(BRANDING) $(MY_OUTPUT_DIR)/xen.inc $(MY_OUTPUT_DIR)/kernel.inc
 
 /output/unified/SOURCES/MANIFEST: buildrpms
 	mkdir /output/unified/SOURCES
@@ -31,6 +31,10 @@ buildrpms:
 	rm -rf /output/unified/RPMS/x86_64/*.src.rpm
 	rm -rf /output/unified/RPMS/repodata
 	cp -r _build/SRPMS /output/unified/
+
+#
+# Xen metadata for later phases
+#
 
 XEN_REPO_NAME := xen-4.6
 IPXE_REPO_NAME := ipxe
@@ -56,17 +60,43 @@ $(MY_OUTPUT_DIR)/xen.inc: $(MY_OUTPUT_DIRSTAMP)
 	{ set -e; set -o pipefail; \
 	$(Q){ echo XEN_PKG_NAME := xen; \
 	  echo XEN_PKG_VERSION := $(XEN_VERSION)-$(XEN_RELEASE); \
-       	  echo XEN_PKG_ARCH := $(DOMAIN0_ARCH_OPTIMIZED); \
-       	  echo XEN_PKG_FILE := RPMS/$(DOMAIN0_ARCH_OPTIMIZED)/$(OUTPUT_RPM); \
-       	  echo XEN_VERSION := $(XEN_VERSION); \
-       	} > $@.tmp; \
-       	mv -f $@.tmp $@; \
-       	}
+	  echo XEN_PKG_ARCH := $(DOMAIN0_ARCH_OPTIMIZED); \
+	  echo XEN_PKG_FILE := RPMS/$(DOMAIN0_ARCH_OPTIMIZED)/$(OUTPUT_RPM); \
+	  echo XEN_VERSION := $(XEN_VERSION); \
+	} > $@.tmp; \
+	mv -f $@.tmp $@; \
+	}
+
+#
+# Kernel metadata for later phases
+#
+
+-include $(MY_OBJ_DIR)/pvops_version.inc
+$(MY_OBJ_DIR)/pvops_version.inc: $(REPOSTAMP)
+	$(call version-makefile) > $@
+	awk -F. '{ print "REPO_VERSION=" $$0; }' \
+	        < $(REPOSTAMP) >> $@
+	awk '/(^VERSION)|(^PATCHLEVEL)|(^SUBLEVEL)|(^EXTRAVERSION)|(^STABLE_SUBLEVEL)/ { print "KERNEL_"$$_ }' ../Makefile >> $@
+	echo LINUX_KABI_VERSION := '$$(KERNEL_VERSION).$$(KERNEL_PATCHLEVEL).$$(KERNEL_SUBLEVEL)$$(KERNEL_EXTRAVERSION)' >> $@
+	$(call git_cset_number,$(REPONAME)) >> $@
+	echo XS_RELEASE := '$$(CSET_NUMBER)' >> $@
+
+
+$(MY_OUTPUT_DIR)/kernel.inc: $(MY_OUTPUT_DIR)/.dirstamp
+	( echo KERNEL_PKG_NAME := kernel-$(LINUX_KABI_VERSION) ;\
+	  echo KERNEL_PKG_VERSION := $(PKG_VERSION) ;\
+	  echo KERNEL_PKG_ARCH := $(DOMAIN0_ARCH_OPTIMIZED) ;\
+	  echo KERNEL_PKG_FILE := RPMS/$(DOMAIN0_ARCH_OPTIMIZED)/$(OUTPUT_RPM) ;\
+	  echo KERNEL_DEBUGINFO_PKG_FILE := RPMS/$(DOMAIN0_ARCH_OPTIMIZED)/$(OUTPUT_DEBUG_RPM) ;\
+	  echo LINUX_KABI_VERSION := $(LINUX_KABI_VERSION) ;\
+	) >$@
 
 .PHONY: $(BRANDING)
 $(BRANDING): $(MY_OUTPUT_DIR)/.dirstamp
 	{ set -e; set -o pipefail; \
 	$(Q)echo "XEN_VERSION := $(XEN_VERSION)" > $@.tmp; \
+	$(Q)echo KERNEL_VERSION := $(PKG_VERSION) >> $@.tmp; \
+	$(Q)echo LINUX_KABI_VERSION := $(LINUX_KABI_VERSION) >>$@.tmp; \
 	mv -f $@.tmp $@; \
 	}
 
