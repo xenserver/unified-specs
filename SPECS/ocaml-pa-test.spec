@@ -2,14 +2,14 @@
 %define debug_package %{nil}
 
 Name:           ocaml-pa-test
-Version:        111.08.00
+Version:        112.24.00
 Release:        1%{?dist}
 Summary:        Jane Street's pa_test
 
 Group:          Development/Libraries
 License:        Apache Software License 2.0
 URL:            https://github.com/janestreet/pa_test
-Source0:        https://ocaml.janestreet.com/ocaml-core/%{version}/individual/pa_test-%{version}.tar.gz
+Source0:        https://ocaml.janestreet.com/ocaml-core/112.24/files/pa_test-112.24.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 ExcludeArch:    sparc64 s390 s390x
 
@@ -18,6 +18,7 @@ BuildRequires:  ocaml-findlib-devel
 BuildRequires:  ocaml-camlp4-devel
 BuildRequires:  ocaml-sexplib-devel
 BuildRequires:  ocaml-type-conv
+BuildRequires:  ocaml-herelib-devel
 
 %define _use_internal_dependency_generator 0
 %define __find_requires /usr/lib/rpm/ocaml-find-requires.sh
@@ -94,6 +95,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/ocaml/pa_test/*.mli
 
 %changelog
+* Fri Jan 22 2016 Jon Ludlam <jonathan.ludlam@citrix.com> - 112.24.00-1
+- Update to 112.24.00
+
 * Tue Oct 14 2014 David Scott <dave.scott@citrix.com> - 111.08.00-1
 - Update to 111.08.00
 

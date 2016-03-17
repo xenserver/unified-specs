@@ -2,14 +2,14 @@
 %define debug_package %{nil}
 
 Name:           ocaml-typerep
-Version:        111.17.00
+Version:        112.35.00
 Release:        1%{?dist}
 Summary:        Runtime types for OCaml.
 
 Group:          Development/Libraries
 License:        Apache Software License 2.0
 URL:            https://github.com/janestreet/typerep
-Source0:        https://ocaml.janestreet.com/ocaml-core/%{version}/individual/typerep-%{version}.tar.gz
+Source0:        https://ocaml.janestreet.com/ocaml-core/112.35/files/typerep-%{version}.tar.gz
 ExcludeArch:    sparc64 s390 s390x
 
 BuildRequires:  ocaml >= 4.00.1
@@ -78,20 +78,12 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc LICENSE.txt  THIRD-PARTY.txt INRIA-DISCLAIMER.txt
 %{_libdir}/ocaml/typerep_lib
-%{_libdir}/ocaml/typerep_extended
-%{_libdir}/ocaml/typerep_generics_sexprep
 %if %opt
 %exclude %{_libdir}/ocaml/typerep_lib/*.a
 %exclude %{_libdir}/ocaml/typerep_lib/*.cmxa
-%exclude %{_libdir}/ocaml/typerep_extended/*.a
-%exclude %{_libdir}/ocaml/typerep_extended/*.cmxa
-%exclude %{_libdir}/ocaml/typerep_generics_sexprep/*.cmxa
 %endif
 %exclude %{_libdir}/ocaml/typerep_lib/*.ml
 %exclude %{_libdir}/ocaml/typerep_lib/*.mli
-%exclude %{_libdir}/ocaml/typerep_extended/*.ml
-%exclude %{_libdir}/ocaml/typerep_extended/*.mli
-%exclude %{_libdir}/ocaml/typerep_generics_sexprep/*.mli
 
 
 %files devel
@@ -100,17 +92,14 @@ rm -rf $RPM_BUILD_ROOT
 %if %opt
 %{_libdir}/ocaml/typerep_lib/*.a
 %{_libdir}/ocaml/typerep_lib/*.cmxa
-%{_libdir}/ocaml/typerep_extended/*.a
-%{_libdir}/ocaml/typerep_extended/*.cmxa
-%{_libdir}/ocaml/typerep_generics_sexprep/*.cmxa
 %endif
 %{_libdir}/ocaml/typerep_lib/*.ml
 %{_libdir}/ocaml/typerep_lib/*.mli
-%{_libdir}/ocaml/typerep_extended/*.ml
-%{_libdir}/ocaml/typerep_extended/*.mli
-%{_libdir}/ocaml/typerep_generics_sexprep/*.mli
 
 %changelog
+* Fri Jan 22 2016 Jon Ludlam <jonathan.ludlam@citrix.com> - 112.35.00-1
+- Update to 112.35.00
+
 * Tue Oct 14 2014 David Scott <dave.scott@citrix.com> - 111.17.00-1
 - Update to 111.17.00
 

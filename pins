@@ -7,29 +7,11 @@
   "SPECS/message-switch.spec": {
     "0": "/repos/message-switch#HEAD"
   },
-  "SPECS/ocaml-cdrom.spec": {
-    "0": "/repos/cdrom#HEAD"
-  },
   "SPECS/ocaml-crc.spec": {
     "0": "/repos/ocaml-crc#HEAD"
   },
-  "SPECS/ocaml-fd-send-recv.spec": {
-    "0": "/repos/ocaml-fd-send-recv#HEAD"
-  },
-  "SPECS/ocaml-mirage-block-volume.spec": {
-    "0": "/repos/mirage-block-volume#HEAD"
-  },
-  "SPECS/ocaml-netdev.spec": {
-    "0": "/repos/netdev#HEAD"
-  },
   "SPECS/ocaml-opasswd.spec": {
     "0": "/repos/ocaml-opasswd#HEAD"
-  },
-  "SPECS/ocaml-qmp.spec": {
-    "0": "/repos/ocaml-qmp#HEAD"
-  },
-  "SPECS/ocaml-sha.spec": {
-    "0": "/repos/ocaml-sha#HEAD"
   },
   "SPECS/ocaml-shared-block-ring.spec": {
     "0": "/repos/shared-block-ring#HEAD"
@@ -61,9 +43,6 @@
   "SPECS/ocaml-xenstore.spec": {
     "0": "/repos/ocaml-xenstore#HEAD"
   },
-  "SPECS/sm-cli.spec": {
-    "0": "/repos/sm-cli#HEAD"
-  },
   "SPECS/xapi-storage-script.spec": {
     "0": "/repos/xapi-storage-script#HEAD"
   },
@@ -79,6 +58,4 @@
   "SPECS/kernel.spec": {
     "0": "/repos/linux-3.x#HEAD"
   }
-
 }
-

@@ -2,14 +2,14 @@
 %define debug_package %{nil}
 
 Name:           ocaml-async
-Version:        111.25.00
+Version:        112.35.00
 Release:        1%{?dist}
 Summary:        Jane Street Capital's asynchronous execution library (core)
 
 Group:          Development/Libraries
 License:        Apache Software License 2.0
 URL:            https://github.com/janestreet/async
-Source0:        https://ocaml.janestreet.com/ocaml-core/%{version}/individual/async-%{version}.tar.gz
+Source0:        https://ocaml.janestreet.com/ocaml-core/112.35/files/async-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 ExcludeArch:    sparc64 s390 s390x
 
@@ -25,6 +25,7 @@ BuildRequires:  ocaml-comparelib-devel
 BuildRequires:  ocaml-enumerate-devel
 BuildRequires:  ocaml-herelib-devel
 BuildRequires:  ocaml-custom-printf-devel
+BuildRequires:  ocaml-pa-structural-sexp-devel
 
 %define _use_internal_dependency_generator 0
 %define __find_requires /usr/lib/rpm/ocaml-find-requires.sh
@@ -47,6 +48,7 @@ Requires:  ocaml-comparelib-devel
 Requires:  ocaml-enumerate-devel
 Requires:  ocaml-herelib-devel
 Requires:  ocaml-custom-printf-devel
+Requires:  ocaml-pa-structural-sexp-devel
 
 %description    devel
 The %{name}-devel package contains libraries and signature files for
@@ -106,6 +108,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/ocaml/async/*.ml
 
 %changelog
+* Fri Jan 22 2016 Jon Ludlam <jonathan.ludlam@citrix.com> - 112.35.00-1
+- Update to 112.35.00
+
 * Tue Oct 14 2014 David Scott <dave.scott@citrix.com> - 111.25.00-1
 - Update to 111.25.00
 

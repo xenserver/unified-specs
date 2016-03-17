@@ -2,14 +2,14 @@
 %define debug_package %{nil}
 
 Name:           ocaml-core
-Version:        111.28.00
+Version:        112.35.01
 Release:        1%{?dist}
 Summary:        System-independent part of Jane Street's Core.
 
 Group:          Development/Libraries
 License:        Apache Software License 2.0
 URL:            https://github.com/janestreet/core_kernel
-Source0:        https://ocaml.janestreet.com/ocaml-core/%{version}/individual/core-%{version}.tar.gz
+Source0:        https://ocaml.janestreet.com/ocaml-core/112.35/files/core-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 ExcludeArch:    sparc64 s390 s390x
 
@@ -31,6 +31,8 @@ BuildRequires:  ocaml-typerep-devel
 BuildRequires:  ocaml-variantslib-devel
 BuildRequires:  ocaml-compiler-libs
 BuildRequires:  ocaml-core-kernel-devel
+BuildRequires:  ocaml-custom-printf-devel
+BuildRequires:  ocaml-pa-structural-sexp-devel
 BuildRequires:  chrpath
 
 %define _use_internal_dependency_generator 0
@@ -130,6 +132,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/ocaml/core/*.mli
 
 %changelog
+* Fri Jan 22 2016 Jon Ludlam <jonathan.ludlam@citrix.com> - 112.35.01-1
+- Update to 112.35.01
+
 * Tue Oct 14 2014 David Scott <dave.scott@citrix.com> - 111.28.00-1
 - Update to 111.28.00
 

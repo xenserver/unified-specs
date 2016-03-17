@@ -2,14 +2,14 @@
 %global debug_package %{nil}
 
 Name:           ocaml-bin-prot
-Version:        111.03.00
+Version:        112.35.00
 Release:        1%{?dist}
 Summary:        Read and write OCaml values in a type-safe binary protocol
 
 Group:          Development/Libraries
 License:        Apache Software License 2.0
 URL:            http://forge.ocamlcore.org/projects/bin_prot
-Source0:        https://ocaml.janestreet.com/ocaml-core/%{version}/individual/bin_prot-%{version}.tar.gz
+Source0:        https://ocaml.janestreet.com/ocaml-core/112.35/files/bin_prot-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  ocaml >= 3.12.0
@@ -98,7 +98,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(-,root,root,-)
-%doc CHANGES.txt README.md TODO.txt
+%doc CHANGES.md README.md TODO.txt
 %if %opt
 %{_libdir}/ocaml/bin_prot/*.a
 %{_libdir}/ocaml/bin_prot/*.cmxa
@@ -107,6 +107,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Jan 22 2016 Jon Ludlam <jonathan.ludlam@citrix.com> - 112.35.00-1
+- Update to 112.35.00
+
 * Tue Oct 14 2014 David Scott <dave.scott@citrix.com> - 111.03.00-1
 - Update to 111.03.00
 

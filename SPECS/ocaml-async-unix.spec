@@ -2,14 +2,14 @@
 %define debug_package %{nil}
 
 Name:           ocaml-async-unix
-Version:        111.28.00
+Version:        112.35.00
 Release:        1%{?dist}
 Summary:        Jane Street Capital's asynchronous execution library (core)
 
 Group:          Development/Libraries
 License:        Apache Software License 2.0
 URL:            https://github.com/janestreet/async_unix
-Source0:        https://ocaml.janestreet.com/ocaml-core/%{version}/individual/async_unix-%{version}.tar.gz
+Source0:        https://ocaml.janestreet.com/ocaml-core/112.35/files/async_unix-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 ExcludeArch:    sparc64 s390 s390x
 
@@ -28,6 +28,8 @@ BuildRequires:  ocaml-pa-pipebang-devel
 BuildRequires:  ocaml-async-kernel-devel
 BuildRequires:  ocaml-sexplib-devel
 BuildRequires:  ocaml-enumerate-devel
+BuildRequires:  ocaml-custom-printf-devel
+BuildRequires:  ocaml-pa-structural-sexp-devel
 
 %define _use_internal_dependency_generator 0
 %define __find_requires /usr/lib/rpm/ocaml-find-requires.sh
@@ -85,6 +87,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc LICENSE.txt THIRD-PARTY.txt INRIA-DISCLAIMER.txt
 %{_libdir}/ocaml/async_unix
+%{_libdir}/ocaml/stublibs/dllasync_unix_stubs.so
+%{_libdir}/ocaml/stublibs/dllasync_unix_stubs.so.owner
 %if %opt
 %exclude %{_libdir}/ocaml/async_unix/*.a
 %exclude %{_libdir}/ocaml/async_unix/*.cmxa
@@ -103,6 +107,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/ocaml/async_unix/*.mli
 
 %changelog
+* Fri Jan 22 2016 Jon Ludlam <jonathan.ludlam@citrix.com> - 112.35.00-1
+- Update to 112.35.00
+
 * Tue Oct 14 2014 David Scott <dave.scott@citrix.com> - 111.28.00-1
 - Update to 111.28.00
 

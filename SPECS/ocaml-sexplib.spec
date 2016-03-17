@@ -1,13 +1,13 @@
 %global debug_package %{nil}
 
 Name:           ocaml-sexplib
-Version:        111.17.00
+Version:        112.35.00
 Release:        1%{?dist}
 Summary:        Convert values to and from s-expressions in OCaml
 
 License:        LGPLv2+ with exceptions and BSD
 URL:            https://ocaml.janestreet.com
-Source0:        https://ocaml.janestreet.com/ocaml-core/%{version}/individual/sexplib-%{version}.tar.gz
+Source0:        https://ocaml.janestreet.com/ocaml-core/112.35/files/sexplib-%{version}.tar.gz
 
 BuildRequires:  ocaml >= 4.00.0
 BuildRequires:  ocaml-findlib
@@ -78,6 +78,9 @@ make install
 %{_libdir}/ocaml/sexplib_unix/*.cmxa
 
 %changelog
+* Fri Jan 22 2016 Jon Ludlam <jonathan.ludlam@citrix.com> - 112.35.00-1
+- Update to 112.35.00
+
 * Wed Jul 16 2014 David Scott <dave.scott@citrix.com> - 111.17.00-1
 - Update to 111.17.00 for Mirage compat
 
