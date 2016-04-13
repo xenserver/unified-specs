@@ -16,6 +16,3 @@ _build/SOURCES/xl.conf: ../xen-4.6/mk/xl.conf
 
 _build/SOURCES/logrotate-xen-tools: ../xen-4.6/mk/logrotate-xen-tools
 	cp $< $@
-
-_build/SOURCES/macros.kernel: ../linux-3.x/mk/macros.kernel
-	cp $< $@
