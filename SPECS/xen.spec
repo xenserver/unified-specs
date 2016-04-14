@@ -28,11 +28,10 @@ Release: 1
 License: GPL
 Group:   System/Hypervisor
 URL:     http://www.xen.org
-Source0: %{name}-%{version}.tar.bz2
-Source1: ipxe.tar.gz
-Source2: sysconfig_kernel-xen
-Source3: xl.conf
-Source4: logrotate-xen-tools
+Source0: http://hg.uk.xensource.com/git/carbon/trunk-ring0/xen-4.6.git/snapshot/refs/heads/master#/xen-4.6.tar.gz
+Source1: sysconfig_kernel-xen
+Source2: xl.conf
+Source3: logrotate-xen-tools
 #Patch0:  xen-development.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
@@ -60,6 +59,11 @@ BuildRequires: python-devel
 # For ocaml stubs
 BuildRequires: ocaml ocaml-findlib
 
+# For ipxe
+BuildRequires: ipxe-source
+
+BuildRequires: libblkid-devel
+
 # For xentop
 BuildRequires: ncurses-devel
 
@@ -69,6 +73,7 @@ BuildRequires: e2fsprogs-devel
 #libext4fs
 BuildRequires: e4fsprogs-devel
 %endif
+BuildRequires: lzo-devel
 
 # Misc
 BuildRequires: libtool
@@ -86,6 +91,7 @@ Xen Hypervisor.
 %package hypervisor
 Summary: The Xen Hypervisor
 Group: System/Hypervisor
+Requires(post): coreutils grep
 %description hypervisor
 This package contains the Xen Hypervisor.
 
@@ -179,20 +185,16 @@ the XenServer installer environment.
 %prep
 %setup -q -n xen-4.6-4.6.0
 mkdir -p tools/firmware/etherboot/ipxe/
-cp %{SOURCE1} tools/firmware/etherboot/ipxe.tar.gz
+cp /usr/src/ipxe-source.tar.gz tools/firmware/etherboot/ipxe.tar.gz
 rm -f tools/firmware/etherboot/patches/series
 #%patch0 -p1 -b ~development
 echo "%{release}" > .scmversion
 
+%build
 %configure \
         --disable-seabios --disable-stubdom --disable-xsmpolicy --disable-blktap2 \
 	--with-system-qemu=%{_libdir}/xen/bin/qemu-system-i386 --with-xenstored=oxenstored \
 	--enable-systemd
-
-# this line is required as some version of rpmbuild does
-# not compile debuginfo package if this section is not present
-%build
-true
 
 %install
 
@@ -226,9 +228,9 @@ chmod -x %{buildroot}/boot/xen-syms-*
 %{__make} %{TOOLS_OPTIONS} -C docs install-man-pages
 %{?cov_wrap} %{__make} %{TOOLS_OPTIONS} -C tools/tests/mce-test/tools install
 
-%{__install} -D -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/kernel-xen
-%{__install} -D -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/xen/xl.conf
-%{__install} -D -m 644 %{SOURCE4} %{buildroot}%{_sysconfdir}/logrotate.d/xen-tools
+%{__install} -D -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/sysconfig/kernel-xen
+%{__install} -D -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/xen/xl.conf
+%{__install} -D -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/logrotate.d/xen-tools
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -269,7 +271,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/%{name}/arch-arm.h
 %{_includedir}/%{name}/arch-arm/hvm/save.h
 %{_includedir}/%{name}/arch-x86/cpuid.h
-%{_includedir}/%{name}/arch-x86/featureset.h
+%{_includedir}/%{name}/arch-x86/cpufeatureset.h
 %{_includedir}/%{name}/arch-x86/hvm/save.h
 %{_includedir}/%{name}/arch-x86/pmu.h
 %{_includedir}/%{name}/arch-x86/xen-mca.h
@@ -455,6 +457,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/xen-lowmemd
 %{_sbindir}/xen-mceinj
 %{_sbindir}/xen-mfndump
+%{_sbindir}/xen-xsplice
 %exclude %{_sbindir}/xen-ringwatch
 %{_sbindir}/xen-vmdebug
 %{_sbindir}/xenbaked
@@ -504,6 +507,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files dom0-libs
 %defattr(-,root,root,-)
+%{_libdir}/fs/btrfs/fsimage.so
 %{_libdir}/fs/ext2fs-lib/fsimage.so
 %{_libdir}/fs/fat/fsimage.so
 %{_libdir}/fs/iso9660/fsimage.so
@@ -680,4 +684,3 @@ fi
 %systemd_postun xenstored_ro.socket
 %endif
 
-%changelog

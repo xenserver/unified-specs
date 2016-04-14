@@ -72,7 +72,7 @@ Requires(pre): %{kernel_prereq}
 Conflicts: %{kernel_dot_org_conflicts}
 Conflicts: %{package_conflicts}
 
-Source0: linux-%{version}-%{release}.tar.bz2
+Source0: http://hg.uk.xensource.com/git/carbon/trunk-ring0/linux-3.x.pg.git/snapshot/refs/heads/master#/linux-3.x.pg.tar.bz2
 Source1: macros.kernel
 
 BuildRoot: %{_tmppath}/kernel-%{version}-root
