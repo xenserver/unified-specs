@@ -15,6 +15,8 @@ FETCH_EXTRA_FLAGS=--mirror file:///distfiles/ocaml2
 
 build: buildrpms /output/unified/SOURCES/MANIFEST $(BRANDING) $(MY_OUTPUT_DIR)/xen.inc $(MY_OUTPUT_DIR)/kernel.inc
 
+#build: $(BRANDING) $(MY_OUTPUT_DIR)/xen.inc $(MY_OUTPUT_DIR)/kernel.inc
+
 /output/unified/SOURCES/MANIFEST: buildrpms
 	mkdir /output/unified/SOURCES
 	for i in $(shell /bin/ls -1 SRPMS/*.rpm); do \
@@ -38,10 +40,15 @@ buildrpms:
 
 XEN_REPO_NAME := xen-4.6
 IPXE_REPO_NAME := ipxe
+KERNEL_REPO_NAME := linux-3.x
 
 $(eval $(shell $(call git_cset_number,$(XEN_REPO_NAME)))) # Defines CSET_NUMBER for us
 XEN_VERSION := $(shell $(MAKE) -C $(call git_loc,$(XEN_REPO_NAME)) --no-print-directory xenversion)
 XEN_RELEASE := $(PLATFORM_VERSION).$(CSET_NUMBER)
+
+$(eval $(shell $(call git_cset_number,$(KERNEL_REPO_NAME)))) # Defines CSET_NUMBER for us
+KERNEL_VERSION := $(shell $(MAKE) -C $(call git_loc,$(KERNEL_REPO_NAME)) --no-print-directory xenversion)
+KERNEL_RELEASE := $(PLATFORM_VERSION).$(CSET_NUMBER)
 
 ifeq ($(BUILD_NUMBER),0x)
 XEN_VENDORVERSION := -xs-local
@@ -71,14 +78,12 @@ $(MY_OUTPUT_DIR)/xen.inc: $(MY_OUTPUT_DIRSTAMP)
 # Kernel metadata for later phases
 #
 
--include $(MY_OBJ_DIR)/pvops_version.inc
+include $(MY_OBJ_DIR)/pvops_version.inc
 $(MY_OBJ_DIR)/pvops_version.inc: $(REPOSTAMP)
 	$(call version-makefile) > $@
-	awk -F. '{ print "REPO_VERSION=" $$0; }' \
-	        < $(REPOSTAMP) >> $@
-	awk '/(^VERSION)|(^PATCHLEVEL)|(^SUBLEVEL)|(^EXTRAVERSION)|(^STABLE_SUBLEVEL)/ { print "KERNEL_"$$_ }' ../Makefile >> $@
+	awk '/(^VERSION)|(^PATCHLEVEL)|(^SUBLEVEL)|(^EXTRAVERSION)|(^STABLE_SUBLEVEL)/ { print "KERNEL_"$$_ }' ../linux-3.x/Makefile >> $@
 	echo LINUX_KABI_VERSION := '$$(KERNEL_VERSION).$$(KERNEL_PATCHLEVEL).$$(KERNEL_SUBLEVEL)$$(KERNEL_EXTRAVERSION)' >> $@
-	$(call git_cset_number,$(REPONAME)) >> $@
+	$(call git_cset_number,$(KERNEL_REPO_NAME)) >> $@
 	echo XS_RELEASE := '$$(CSET_NUMBER)' >> $@
 
 
