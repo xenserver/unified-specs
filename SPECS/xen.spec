@@ -183,7 +183,7 @@ This package contains the minimal subset of libraries and binaries required in
 the XenServer installer environment.
 
 %prep
-%setup -q -n xen-4.6-4.6.0
+%setup -q -n xen-4.6-%{version}
 mkdir -p tools/firmware/etherboot/ipxe/
 cp /usr/src/ipxe-source.tar.gz tools/firmware/etherboot/ipxe.tar.gz
 rm -f tools/firmware/etherboot/patches/series
