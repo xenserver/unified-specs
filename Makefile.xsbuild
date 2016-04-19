@@ -15,8 +15,6 @@ FETCH_EXTRA_FLAGS=--mirror file:///distfiles/ocaml2
 
 build: buildrpms /output/unified/SOURCES/MANIFEST $(BRANDING) $(MY_OUTPUT_DIR)/xen.inc $(MY_OUTPUT_DIR)/kernel.inc
 
-#build: $(BRANDING) $(MY_OUTPUT_DIR)/xen.inc $(MY_OUTPUT_DIR)/kernel.inc
-
 /output/unified/SOURCES/MANIFEST: buildrpms
 	mkdir /output/unified/SOURCES
 	for i in $(shell /bin/ls -1 SRPMS/*.rpm); do \
@@ -46,9 +44,11 @@ $(eval $(shell $(call git_cset_number,$(XEN_REPO_NAME)))) # Defines CSET_NUMBER 
 XEN_VERSION := $(shell $(MAKE) -C $(call git_loc,$(XEN_REPO_NAME)) --no-print-directory xenversion)
 XEN_RELEASE := $(PLATFORM_VERSION).$(CSET_NUMBER)
 
-$(eval $(shell $(call git_cset_number,$(KERNEL_REPO_NAME)))) # Defines CSET_NUMBER for us
-KERNEL_VERSION := $(shell $(MAKE) -C $(call git_loc,$(KERNEL_REPO_NAME)) --no-print-directory xenversion)
-KERNEL_RELEASE := $(PLATFORM_VERSION).$(CSET_NUMBER)
+KERNEL_PKG_VERSION = $(KERNEL_VERSION).$(KERNEL_PATCHLEVEL).$(KERNEL_STABLE_SUBLEVEL)
+
+HYPERVISOR_OUTPUT_RPM := xen-hypervisor-$(XEN_VERSION)-*.$(DOMAIN0_ARCH_OPTIMIZED).rpm
+KERNEL_OUTPUT_RPM = kernel-$(KERNEL_PKG_VERSION)-*.$(DOMAIN0_ARCH_OPTIMIZED).rpm
+KERNEL_OUTPUT_DEBUG_RPM = kernel-debuginfo-$(KERNEL_PKG_VERSION)-*.$(DOMAIN0_ARCH_OPTIMIZED).rpm
 
 ifeq ($(BUILD_NUMBER),0x)
 XEN_VENDORVERSION := -xs-local
@@ -63,12 +63,12 @@ PQ_CSET_STR   := $(shell { git rev-parse --verify --short=12 HEAD    --git-dir=$
 XEN_CHANGESET := "$(BASE_CSET_STR), pq $(PQ_CSET_STR)"
 
 .PHONY: $(MY_OUTPUT_DIR)/xen.inc
-$(MY_OUTPUT_DIR)/xen.inc: $(MY_OUTPUT_DIRSTAMP)
+$(MY_OUTPUT_DIR)/xen.inc: $(MY_OUTPUT_DIRSTAMP) buildrpms
 	{ set -e; set -o pipefail; \
 	$(Q){ echo XEN_PKG_NAME := xen; \
 	  echo XEN_PKG_VERSION := $(XEN_VERSION)-$(XEN_RELEASE); \
 	  echo XEN_PKG_ARCH := $(DOMAIN0_ARCH_OPTIMIZED); \
-	  echo XEN_PKG_FILE := RPMS/$(DOMAIN0_ARCH_OPTIMIZED)/$(OUTPUT_RPM); \
+	  echo XEN_PKG_FILE := RPMS/$(DOMAIN0_ARCH_OPTIMIZED)/$(HYPERVISOR_OUTPUT_RPM); \
 	  echo XEN_VERSION := $(XEN_VERSION); \
 	} > $@.tmp; \
 	mv -f $@.tmp $@; \
@@ -87,12 +87,12 @@ $(MY_OBJ_DIR)/pvops_version.inc: $(REPOSTAMP)
 	echo XS_RELEASE := '$$(CSET_NUMBER)' >> $@
 
 
-$(MY_OUTPUT_DIR)/kernel.inc: $(MY_OUTPUT_DIR)/.dirstamp
+$(MY_OUTPUT_DIR)/kernel.inc: $(MY_OUTPUT_DIR)/.dirstamp buildrpms
 	( echo KERNEL_PKG_NAME := kernel-$(LINUX_KABI_VERSION) ;\
-	  echo KERNEL_PKG_VERSION := $(PKG_VERSION) ;\
+	  echo KERNEL_PKG_VERSION := $(KERNEL_PKG_VERSION) ;\
 	  echo KERNEL_PKG_ARCH := $(DOMAIN0_ARCH_OPTIMIZED) ;\
-	  echo KERNEL_PKG_FILE := RPMS/$(DOMAIN0_ARCH_OPTIMIZED)/$(OUTPUT_RPM) ;\
-	  echo KERNEL_DEBUGINFO_PKG_FILE := RPMS/$(DOMAIN0_ARCH_OPTIMIZED)/$(OUTPUT_DEBUG_RPM) ;\
+	  echo KERNEL_PKG_FILE := RPMS/$(DOMAIN0_ARCH_OPTIMIZED)/$(KERNEL_OUTPUT_RPM) ;\
+	  echo KERNEL_DEBUGINFO_PKG_FILE := RPMS/$(DOMAIN0_ARCH_OPTIMIZED)/$(KERNEL_OUTPUT_DEBUG_RPM) ;\
 	  echo LINUX_KABI_VERSION := $(LINUX_KABI_VERSION) ;\
 	) >$@
 
@@ -100,7 +100,7 @@ $(MY_OUTPUT_DIR)/kernel.inc: $(MY_OUTPUT_DIR)/.dirstamp
 $(BRANDING): $(MY_OUTPUT_DIR)/.dirstamp
 	{ set -e; set -o pipefail; \
 	$(Q)echo "XEN_VERSION := $(XEN_VERSION)" > $@.tmp; \
-	$(Q)echo KERNEL_VERSION := $(PKG_VERSION) >> $@.tmp; \
+	$(Q)echo KERNEL_VERSION := $(KERNEL_PKG_VERSION) >> $@.tmp; \
 	$(Q)echo LINUX_KABI_VERSION := $(LINUX_KABI_VERSION) >>$@.tmp; \
 	mv -f $@.tmp $@; \
 	}

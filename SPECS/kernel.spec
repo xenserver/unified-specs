@@ -57,7 +57,7 @@ Name: kernel
 Vendor: Citrix Systems, Inc.
 Group: System Environment/Kernel
 License: GPLv2
-Version: 3.x
+Version: 3.10.96
 Release: 367.382019
 ExclusiveArch: noarch i686 x86_64
 ExclusiveOS: Linux
@@ -126,8 +126,8 @@ against the %{uname} kernel.
 
 %prep 
 
-%setup -q -n %{name}-%{version} -c
-cd linux-%{version}-%{version}
+%setup -q -n %{name}-3.x-%{version} -c
+cd linux-3.x-%{version}
 %{DEFINE_MAKEOPTS}
 make ${MAKEOPTS} mrproper
 cp -f buildconfigs/linux-defconfig_xen_%{target} .config
@@ -142,7 +142,7 @@ cp -f buildconfigs/linux-defconfig_xen_%{target} .config
 # This affects the vDSO images in vmlinux, and the vmlinux image in bzImage.
 export AFTER_LINK='sh -xc "/usr/lib/rpm/debugedit -b $$RPM_BUILD_DIR -d /usr/src/debug -i $@ > $@.id"'
 
-cd linux-%{version}-%{version}
+cd linux-3.x-%{version}
 %{DEFINE_MAKEOPTS}
 make ${MAKEOPTS} silentoldconfig
 if grep -q ^CONFIG_MODULES=y$ .config ; then
@@ -155,7 +155,7 @@ fi
 
 %install
 
-cd linux-%{version}-%{version}
+cd linux-3.x-%{version}
 %{DEFINE_MAKEOPTS}
 # Install kernel
 install -d -m 755 $RPM_BUILD_ROOT/boot
