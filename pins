@@ -60,5 +60,8 @@
   },
   "SPECS/kernel.spec": {
     "0": "/repos/linux-3.x#HEAD"
+  },
+  "SPECS/blktap.spec": {
+    "0": "/repos/blktap#HEAD"
   }
 }
