@@ -5,8 +5,8 @@ Release: xs7777
 License: GPLv2 or BSD
 Group: System/Hypervisor
 Source0: http://hg.uk.xensource.com/git/carbon/trunk-transformer/blktap.git/snapshot/refs/heads/master#/blktap.tar.bz2
-Source1: blktap-udev-ignore-tapdevs.patch
 
+Patch1: blktap-udev-ignore-tapdevs.patch
 BuildRoot: %{_tmppath}/%{name}-%{release}-buildroot
 Obsoletes: xen-blktap
 BuildRequires: e2fsprogs-devel, libaio-devel, systemd, autogen, autoconf, automake, libtool, libuuid-devel
@@ -40,7 +40,7 @@ Blktap and VHD development files.
 
 %prep
 %setup -q
-#%patch1 -p1
+%patch1 -p1
 
 %build
 sh autogen.sh
