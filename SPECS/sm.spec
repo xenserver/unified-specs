@@ -1,0 +1,345 @@
+# -*- rpm-spec -*-
+
+Summary: sm - XCP storage managers
+Name:    sm
+Version: 1.13.0
+Release: xs7777
+Group:   System/Hypervisor
+License: LGPL
+URL:  http://www.citrix.com
+Source0: http://hg.uk.xensource.com/git/carbon/trunk-transformer/sm.git/snapshot/refs/heads/master#/sm.tar.bz2
+BuildRoot: %{_tmppath}/%{name}-%{version}-root
+BuildRequires: python-devel xen-devel systemd pylint
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
+Requires: xenserver-multipath
+
+%description
+This package contains storage backends used in XCP
+
+%prep
+%setup -q
+
+%build
+DESTDIR=$RPM_BUILD_ROOT make
+
+%install
+DESTDIR=$RPM_BUILD_ROOT make install
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%post
+[ ! -x /sbin/chkconfig ] || chkconfig --add mpathroot
+[ ! -x /sbin/chkconfig ] || chkconfig --add sm-multipath
+service sm-multipath start
+%systemd_post make-dummy-sr.service
+%systemd_post snapwatchd.service
+%systemd_post updatempppathd.service
+
+[ -f /etc/lvm/lvm.conf.orig ] || cp /etc/lvm/lvm.conf /etc/lvm/lvm.conf.orig || exit $?
+[ -d /etc/lvm/master ] || mkdir /etc/lvm/master || exit $?
+mv -f /etc/lvm/lvm.conf /etc/lvm/master/lvm.conf || exit $?
+sed -i 's/metadata_read_only =.*/metadata_read_only = 0/' /etc/lvm/master/lvm.conf || exit $?
+sed -i 's/archive = .*/archive = 0/' /etc/lvm/master/lvm.conf || exit $?
+sed -i 's/use_lvmetad = 1/use_lvmetad = 0/' /etc/lvm/master/lvm.conf || exit $?
+sed -i 's/udev_sync = 1/udev_sync = 0/' /etc/lvm/master/lvm.conf || exit $?
+sed -i 's/udev_rules = 1/udev_rules = 0/' /etc/lvm/master/lvm.conf || exit $?
+sed -i 's/obtain_device_list_from_udev = 1/obtain_device_list_from_udev = 0/' /etc/lvm/master/lvm.conf || exit $?
+sed -i 's/write_cache_state = 1/write_cache_state = 0/' /etc/lvm/master/lvm.conf || exit $?
+cp /etc/lvm/master/lvm.conf /etc/lvm/lvm.conf || exit $?
+sed -i 's/metadata_read_only =.*/metadata_read_only = 1/' /etc/lvm/lvm.conf || exit $?
+rm -f /etc/lvm/cache/.cache
+touch /etc/lvm/cache/.cache
+mv /usr/sbin/lvmetad /usr/sbin/lvmetad_
+
+# We try to be "update-alternatives" ready.
+# If a file exists and it is not a symlink we back it up
+if [ -e /etc/multipath.conf -a ! -h /etc/multipath.conf ]; then
+   mv -f /etc/multipath.conf /etc/multipath.conf.$(date +%F_%T)
+fi
+update-alternatives --install /etc/multipath.conf multipath.conf /etc/multipath.xenserver/multipath.conf 90
+
+%preun
+[ ! -x /sbin/chkconfig ] || chkconfig --del sm-multipath
+%systemd_preun make-dummy-sr.service
+%systemd_preun snapwatchd.service
+%systemd_preun updatempppathd.service
+#only remove in case of erase (but not at upgrade)
+if [ $1 -eq 0 ] ; then
+	update-alternatives --remove multipath.conf /etc/multipath.xenserver/multipath.conf
+fi
+exit 0
+
+%postun
+%systemd_postun make-dummy-sr.service
+%systemd_postun_with_restart snapwatchd.service
+%systemd_postun updatempppathd.service
+if [ $1 -eq 0 ]; then
+    [ ! -d /etc/lvm/master ] || rm -Rf /etc/lvm/master || exit $?
+    cp -f /etc/lvm/lvm.conf.orig /etc/lvm/lvm.conf || exit $?
+    mv /usr/sbin/lvmetad_ /usr/sbin/lvmetad
+elif [ $1 -eq 1 ]; then
+    true; 
+fi
+
+%files
+%defattr(-,root,root,-)
+/etc/rc.d/init.d/mpathroot
+/etc/udev/scripts/xs-mpath-scsidev.sh
+/etc/xapi.d/plugins/coalesce-leaf
+/etc/xapi.d/plugins/lvhd-thin
+/etc/xapi.d/plugins/nfs-on-slave
+/etc/xapi.d/plugins/on-slave
+/etc/xapi.d/plugins/tapdisk-pause
+/etc/xapi.d/plugins/testing-hooks
+/etc/xapi.d/plugins/vss_control
+/etc/xapi.d/plugins/intellicache-clean
+/etc/xapi.d/plugins/trim
+/etc/xensource/master.d/02-vhdcleanup
+/opt/xensource/bin/blktap2
+/opt/xensource/bin/tapdisk-cache-stats
+/opt/xensource/bin/xe-getarrayidentifier
+/opt/xensource/bin/xe-get-arrayid-lunnum
+/opt/xensource/bin/xe-getlunidentifier
+/opt/xensource/debug/tp
+/opt/xensource/libexec/check-device-sharing
+/opt/xensource/libexec/dcopy
+/opt/xensource/libexec/local-device-change
+/opt/xensource/libexec/make-dummy-sr
+/opt/xensource/sm/DummySR
+/opt/xensource/sm/DummySR.py
+/opt/xensource/sm/DummySR.pyc
+/opt/xensource/sm/DummySR.pyo
+/opt/xensource/sm/EXTSR
+/opt/xensource/sm/EXTSR.py
+/opt/xensource/sm/EXTSR.pyc
+/opt/xensource/sm/EXTSR.pyo
+/opt/xensource/sm/FileSR
+/opt/xensource/sm/FileSR.py
+/opt/xensource/sm/FileSR.pyc
+/opt/xensource/sm/FileSR.pyo
+/opt/xensource/sm/HBASR
+/opt/xensource/sm/HBASR.py
+/opt/xensource/sm/HBASR.pyc
+/opt/xensource/sm/HBASR.pyo
+/opt/xensource/sm/ISCSISR
+/opt/xensource/sm/RawISCSISR.py
+/opt/xensource/sm/RawISCSISR.pyc
+/opt/xensource/sm/RawISCSISR.pyo
+/opt/xensource/sm/BaseISCSI.py
+/opt/xensource/sm/BaseISCSI.pyc
+/opt/xensource/sm/BaseISCSI.pyo
+/opt/xensource/sm/ISOSR
+/opt/xensource/sm/ISOSR.py
+/opt/xensource/sm/ISOSR.pyc
+/opt/xensource/sm/ISOSR.pyo
+/opt/xensource/sm/OCFSSR.py
+/opt/xensource/sm/OCFSSR.pyc
+/opt/xensource/sm/OCFSSR.pyo
+/opt/xensource/sm/OCFSoISCSISR.py
+/opt/xensource/sm/OCFSoISCSISR.pyc
+/opt/xensource/sm/OCFSoISCSISR.pyo
+/opt/xensource/sm/OCFSoHBASR.py
+/opt/xensource/sm/OCFSoHBASR.pyc
+/opt/xensource/sm/OCFSoHBASR.pyo
+/opt/xensource/sm/LUNperVDI.py
+/opt/xensource/sm/LUNperVDI.pyc
+/opt/xensource/sm/LUNperVDI.pyo
+/opt/xensource/sm/LVHDSR.py
+/opt/xensource/sm/LVHDSR.pyc
+/opt/xensource/sm/LVHDSR.pyo
+/opt/xensource/sm/LVHDoHBASR.py
+/opt/xensource/sm/LVHDoHBASR.pyc
+/opt/xensource/sm/LVHDoHBASR.pyo
+/opt/xensource/sm/LVHDoISCSISR.py
+/opt/xensource/sm/LVHDoISCSISR.pyc
+/opt/xensource/sm/LVHDoISCSISR.pyo
+/opt/xensource/sm/LVHDoFCoESR.py
+/opt/xensource/sm/LVHDoFCoESR.pyc
+/opt/xensource/sm/LVHDoFCoESR.pyo
+/opt/xensource/sm/LVMSR
+/opt/xensource/sm/LVMoHBASR
+/opt/xensource/sm/LVMoISCSISR
+/opt/xensource/sm/LVMoFCoESR
+/opt/xensource/sm/NFSSR
+/opt/xensource/sm/NFSSR.py
+/opt/xensource/sm/NFSSR.pyc
+/opt/xensource/sm/NFSSR.pyo
+/opt/xensource/sm/SMBSR
+/opt/xensource/sm/SMBSR.py
+/opt/xensource/sm/SMBSR.pyc
+/opt/xensource/sm/SMBSR.pyo
+/opt/xensource/sm/SHMSR.py
+/opt/xensource/sm/SHMSR.pyc
+/opt/xensource/sm/SHMSR.pyo
+/opt/xensource/sm/SR.py
+/opt/xensource/sm/SR.pyc
+/opt/xensource/sm/SR.pyo
+/opt/xensource/sm/SRCommand.py
+/opt/xensource/sm/SRCommand.pyc
+/opt/xensource/sm/SRCommand.pyo
+/opt/xensource/sm/VDI.py
+/opt/xensource/sm/VDI.pyc
+/opt/xensource/sm/VDI.pyo
+/opt/xensource/sm/XE_SR_ERRORCODES.xml
+/opt/xensource/sm/blktap2.py
+/opt/xensource/sm/blktap2.pyc
+/opt/xensource/sm/blktap2.pyo
+/opt/xensource/sm/cleanup.py
+/opt/xensource/sm/cleanup.pyc
+/opt/xensource/sm/cleanup.pyo
+/opt/xensource/sm/devscan.py
+/opt/xensource/sm/devscan.pyc
+/opt/xensource/sm/devscan.pyo
+/opt/xensource/sm/fjournaler.py
+/opt/xensource/sm/fjournaler.pyc
+/opt/xensource/sm/fjournaler.pyo
+/opt/xensource/sm/flock.py
+/opt/xensource/sm/flock.pyc
+/opt/xensource/sm/flock.pyo
+/opt/xensource/sm/ipc.py
+/opt/xensource/sm/ipc.pyc
+/opt/xensource/sm/ipc.pyo
+/opt/xensource/sm/iscsilib.py
+/opt/xensource/sm/iscsilib.pyc
+/opt/xensource/sm/iscsilib.pyo
+/opt/xensource/sm/fcoelib.py
+/opt/xensource/sm/fcoelib.pyc
+/opt/xensource/sm/fcoelib.pyo
+/opt/xensource/sm/journaler.py
+/opt/xensource/sm/journaler.pyc
+/opt/xensource/sm/journaler.pyo
+/opt/xensource/sm/lcache.py
+/opt/xensource/sm/lcache.pyc
+/opt/xensource/sm/lcache.pyo
+/opt/xensource/sm/lock.py
+/opt/xensource/sm/lock.pyc
+/opt/xensource/sm/lock.pyo
+/opt/xensource/sm/lvhdutil.py
+/opt/xensource/sm/lvhdutil.pyc
+/opt/xensource/sm/lvhdutil.pyo
+/opt/xensource/sm/lvmanager.py
+/opt/xensource/sm/lvmanager.pyc
+/opt/xensource/sm/lvmanager.pyo
+/opt/xensource/sm/lvmcache.py
+/opt/xensource/sm/lvmcache.pyc
+/opt/xensource/sm/lvmcache.pyo
+/opt/xensource/sm/lvutil.py
+/opt/xensource/sm/lvutil.pyc
+/opt/xensource/sm/lvutil.pyo
+/opt/xensource/sm/metadata.py
+/opt/xensource/sm/metadata.pyc
+/opt/xensource/sm/metadata.pyo
+/opt/xensource/sm/srmetadata.py
+/opt/xensource/sm/srmetadata.pyc
+/opt/xensource/sm/srmetadata.pyo
+/opt/xensource/sm/mpath_cli.py
+/opt/xensource/sm/mpath_cli.pyc
+/opt/xensource/sm/mpath_cli.pyo
+/opt/xensource/sm/mpath_dmp.py
+/opt/xensource/sm/mpath_dmp.pyc
+/opt/xensource/sm/mpath_dmp.pyo
+/opt/xensource/sm/mpath_null.py
+/opt/xensource/sm/mpath_null.pyc
+/opt/xensource/sm/mpath_null.pyo
+/opt/xensource/sm/mpathcount.py
+/opt/xensource/sm/mpathcount.pyc
+/opt/xensource/sm/mpathcount.pyo
+/opt/xensource/sm/mpathutil.py
+/opt/xensource/sm/mpathutil.pyc
+/opt/xensource/sm/mpathutil.pyo
+/opt/xensource/sm/mpp_luncheck.py
+/opt/xensource/sm/mpp_luncheck.pyc
+/opt/xensource/sm/mpp_luncheck.pyo
+/opt/xensource/sm/mpp_mpathutil.py
+/opt/xensource/sm/mpp_mpathutil.pyc
+/opt/xensource/sm/mpp_mpathutil.pyo
+/opt/xensource/sm/nfs.py
+/opt/xensource/sm/nfs.pyc
+/opt/xensource/sm/nfs.pyo
+/opt/xensource/sm/refcounter.py
+/opt/xensource/sm/refcounter.pyc
+/opt/xensource/sm/refcounter.pyo
+/opt/xensource/sm/resetvdis.py
+/opt/xensource/sm/resetvdis.pyc
+/opt/xensource/sm/resetvdis.pyo
+/opt/xensource/sm/scsiutil.py
+/opt/xensource/sm/scsiutil.pyc
+/opt/xensource/sm/scsiutil.pyo
+/opt/xensource/sm/scsi_host_rescan.py
+/opt/xensource/sm/scsi_host_rescan.pyc
+/opt/xensource/sm/scsi_host_rescan.pyo
+/opt/xensource/sm/snapwatchd/snapwatchd
+/opt/xensource/sm/snapwatchd/xslib.py
+/opt/xensource/sm/snapwatchd/xslib.pyc
+/opt/xensource/sm/snapwatchd/xslib.pyo
+/opt/xensource/sm/snapwatchd/snapdebug.py
+/opt/xensource/sm/snapwatchd/snapdebug.pyc
+/opt/xensource/sm/snapwatchd/snapdebug.pyo
+/opt/xensource/sm/sysdevice.py
+/opt/xensource/sm/sysdevice.pyc
+/opt/xensource/sm/sysdevice.pyo
+/opt/xensource/sm/udevSR
+/opt/xensource/sm/udevSR.py
+/opt/xensource/sm/udevSR.pyc
+/opt/xensource/sm/udevSR.pyo
+/opt/xensource/sm/updatempppathd.py
+/opt/xensource/sm/updatempppathd.pyc
+/opt/xensource/sm/updatempppathd.pyo
+/opt/xensource/sm/util.py
+/opt/xensource/sm/util.pyc
+/opt/xensource/sm/util.pyo
+/opt/xensource/sm/verifyVHDsOnSR.py
+/opt/xensource/sm/verifyVHDsOnSR.pyc
+/opt/xensource/sm/verifyVHDsOnSR.pyo
+/opt/xensource/sm/vhdutil.py
+/opt/xensource/sm/vhdutil.pyc
+/opt/xensource/sm/vhdutil.pyo
+/opt/xensource/sm/trim_util.py
+/opt/xensource/sm/trim_util.pyc
+/opt/xensource/sm/trim_util.pyo
+/opt/xensource/sm/vss_control
+/opt/xensource/sm/xs_errors.py
+/opt/xensource/sm/xs_errors.pyc
+/opt/xensource/sm/xs_errors.pyo
+/opt/xensource/sm/wwid_conf.py
+/opt/xensource/sm/wwid_conf.pyc
+/opt/xensource/sm/wwid_conf.pyo
+/opt/xensource/sm/pluginutil.py
+/opt/xensource/sm/pluginutil.pyc
+/opt/xensource/sm/pluginutil.pyo
+/sbin/mpathutil
+/etc/rc.d/init.d/sm-multipath
+%{_unitdir}/make-dummy-sr.service
+%{_unitdir}/snapwatchd.service
+%{_unitdir}/updatempppathd.service
+%config /etc/udev/rules.d/40-multipath.rules
+%config /etc/udev/rules.d/55-xs-mpath-scsidev.rules
+%config /etc/udev/rules.d/58-xapi.rules
+%config /etc/multipath.xenserver/multipath.conf
+%config /etc/udev/rules.d/69-dm-lvm-metad.rules
+%config /etc/modprobe.d/cifs.conf
+%config /etc/logrotate.d/SMlog
+
+%changelog
+
+%package rawhba
+Group:   System/Hypervisor
+Summary: rawhba SR type capability
+#Requires: sm = @SM_VERSION@-@SM_RELEASE@
+
+%description rawhba
+This package adds a new rawhba SR type. This SR type allows utilization of
+Fiber Channel raw LUNs as separate VDIs (LUN per VDI)
+
+%files rawhba
+/opt/xensource/sm/RawHBASR.py
+%exclude /opt/xensource/sm/RawHBASR
+/opt/xensource/sm/RawHBASR.pyc
+/opt/xensource/sm/RawHBASR.pyo
+/opt/xensource/sm/B_util.py
+/opt/xensource/sm/B_util.pyc
+/opt/xensource/sm/B_util.pyo
+/opt/xensource/sm/enable-borehamwood

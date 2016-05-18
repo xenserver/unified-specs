@@ -63,5 +63,8 @@
   },
   "SPECS/blktap.spec": {
     "0": "/repos/blktap#HEAD"
+  },
+  "SPECS/sm.spec": {
+    "0": "/repos/sm#HEAD"
   }
 }
